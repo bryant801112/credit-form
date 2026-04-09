@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>信用申請表</title>
+</head>
+<body>
+  <h2>信用額度申請</h2>
+
+  <input id="name" placeholder="姓名"><br><br>
+  <input id="phone" placeholder="電話"><br><br>
+  <input id="line" placeholder="LINE ID"><br><br>
+
+  <button onclick="submitForm()">送出</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = supabase.createClient
+      "https://trhxabsjnzgfscxvsbiy.supabase.co",
+      "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
+    );
+
+    async function submitForm() {
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const line = document.getElementById("line").value;
+
+      await supabase.from("credit_applications").insert([
+        {
+          application_no: Date.now().toString(),
+          full_name: name,
+          phone: phone,
+          line_id: line,
+          national_id: "test",
+          current_address: "test",
+          emergency_contact: "test",
+          relationship: "test",
+          emergency_phone: "test",
+          company_name: "test",
+          company_address: "test",
+          company_phone: "test",
+          monthly_salary_range: "B"
+        }
+      ]);
+
+      alert("送出成功");
+    }
+  </script>
+</body>
+</html>
