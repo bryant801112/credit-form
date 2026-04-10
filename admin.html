@@ -1,397 +1,242 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>版務審核後台</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body{
-      margin:0;
-      font-family:Arial,"Microsoft JhengHei",sans-serif;
-      background:#0b1020;
-      color:#eef2ff;
-      padding:24px;
-    }
-    .wrap{
-      max-width:1200px;
-      margin:0 auto;
-    }
-    .card{
-      background:#121a33;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px;
-      padding:20px;
-      margin-bottom:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
-    }
-    h1,h2{margin-top:0}
-    .small{
-      font-size:12px;
-      color:#aab3d1;
-      line-height:1.7;
-    }
-    .hidden{display:none}
-    input,select,textarea,button{
-      font-family:inherit;
-      font-size:14px;
-    }
-    input,select,textarea{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.12);
-      background:#0f1730;
-      color:#fff;
-      box-sizing:border-box;
-    }
-    textarea{
-      resize:vertical;
-      min-height:80px;
-    }
-    select option{
-      color:#000;
-      background:#fff;
-    }
-    button{
-      padding:10px 14px;
-      border:none;
-      border-radius:10px;
-      cursor:pointer;
-      color:#fff;
-      font-weight:700;
-      background:linear-gradient(90deg,#6c63ff,#00c6ff);
-    }
-    .btn-secondary{
-      background:#2a355e;
-    }
-    .login-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr 120px;
-      gap:12px;
-      margin-top:14px;
-    }
-    .toolbar{
-      display:grid;
-      grid-template-columns:1fr 180px 180px 120px;
-      gap:12px;
-      margin-bottom:16px;
-    }
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:14px;
-    }
-    .tag{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.08);
-      color:#aab3d1;
-      font-size:12px;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-    }
-    th,td{
-      border-bottom:1px solid rgba(255,255,255,.08);
-      text-align:left;
-      vertical-align:top;
-      padding:12px 10px;
-      font-size:13px;
-    }
-    th{
-      color:#aab3d1;
-      font-weight:600;
-      background:#121a33;
-    }
-    .status{
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:700;
-      margin-bottom:8px;
-    }
-    .待審核{background:rgba(255,193,7,.18);color:#ffd76a}
-    .已聯繫{background:rgba(0,198,255,.18);color:#7be7ff}
-    .通過{background:rgba(0,229,168,.18);color:#7effd6}
-    .拒絕{background:rgba(255,107,107,.18);color:#ffb3b3}
-    .actions{
-      display:grid;
-      gap:8px;
-      min-width:170px;
-    }
-    .msg{
-      margin-top:12px;
-      color:#ffb3b3;
-      font-size:13px;
-    }
-    @media (max-width: 980px){
-      .login-grid,.toolbar{grid-template-columns:1fr}
-      table,thead,tbody,th,td,tr{display:block}
-      thead{display:none}
-      tr{
-        border:1px solid rgba(255,255,255,.08);
-        border-radius:14px;
-        padding:10px;
-        margin-bottom:14px;
-        background:#0f1730;
-      }
-      td{
-        border-bottom:none;
-        padding:8px 0;
-      }
-      td::before{
-        content:attr(data-label);
-        display:block;
-        color:#aab3d1;
-        font-size:12px;
-        margin-bottom:4px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>版務審核後台</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0b1220,#0d1e3a);
+  color:#fff;
+}
+
+.container {
+  max-width:1100px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius:16px;
+  padding:24px;
+  margin-bottom:20px;
+  backdrop-filter: blur(10px);
+}
+
+input,button,select {
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+}
+
+input {
+  width:100%;
+  margin-bottom:10px;
+}
+
+button {
+  cursor:pointer;
+  background: linear-gradient(90deg,#7c5cff,#00d4ff);
+  color:#fff;
+}
+
+.table {
+  width:100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.badge {
+  padding:4px 10px;
+  border-radius:6px;
+}
+
+.pending { background:#ffaa00; }
+.approved { background:#00c853; }
+.rejected { background:#ff5252; }
+
+.hidden { display:none; }
+.msg { color:#ff6b6b; margin-top:10px; }
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card" id="loginCard">
-      <h1>版務審核後台登入</h1>
-      <div class="small">僅限 admin / staff 使用。</div>
-      <div class="login-grid">
-        <input id="email" type="email" placeholder="登入 Email">
-        <input id="password" type="password" placeholder="登入密碼">
-        <button onclick="login()">登入</button>
-      </div>
-      <div id="loginMsg" class="msg"></div>
-    </div>
 
-    <div id="adminApp" class="hidden">
-      <div class="card">
-        <div class="topbar">
-          <div>
-            <h2 style="margin-bottom:6px;">信用申請審核後台</h2>
-            <div class="small" id="userInfo">未登入</div>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <span class="tag">admin / staff 可看全部</span>
-            <button class="btn-secondary" onclick="logout()">登出</button>
-          </div>
-        </div>
+<div class="container">
 
-        <div class="toolbar">
-          <input id="searchKeyword" placeholder="搜尋姓名 / 電話 / LINE ID">
-          <select id="filterStatus">
-            <option value="">全部狀態</option>
-            <option value="待審核">待審核</option>
-            <option value="已聯繫">已聯繫</option>
-            <option value="通過">通過</option>
-            <option value="拒絕">拒絕</option>
-          </select>
-          <input id="filterAgent" placeholder="代理代碼，例如 A001">
-          <button onclick="loadData()">查詢</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>建立時間</th>
-              <th>代理</th>
-              <th>會員資料</th>
-              <th>職務資料</th>
-              <th>狀態 / 備註</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-    </div>
+  <!-- 登入 -->
+  <div class="card" id="loginCard">
+    <h2>版務後台登入</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="密碼">
+    <button onclick="login()">登入</button>
+    <div class="msg" id="loginMsg"></div>
   </div>
 
-  <script>
-    const supabase = window.supabase.createClient(
-      "https://trhxabsjnzgfscxvsbiy.supabase.co",
-      "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
-    );
+  <!-- 後台 -->
+  <div id="adminApp" class="hidden">
 
-    let currentUser = null;
+    <div class="card">
+      <div id="userInfo"></div>
+      <button onclick="logout()">登出</button>
+    </div>
 
-    async function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const msg = document.getElementById("loginMsg");
-      msg.textContent = "";
+    <div class="card">
+      <h3>會員申請資料</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>姓名</th>
+            <th>電話</th>
+            <th>LINE</th>
+            <th>代理</th>
+            <th>額度</th>
+            <th>狀態</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="dataBody"></tbody>
+      </table>
+    </div>
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+  </div>
 
-      if (error) {
-        msg.textContent = "登入失敗：" + error.message;
-        return;
-      }
+</div>
 
-      await initApp();
-    }
+<script>
+const supabase = window.supabase.createClient(
+  "https://trhxabsjzngfscxvbsiy.supabase.co",
+  "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
+);
 
-    async function logout() {
-      await supabase.auth.signOut();
-      document.getElementById("adminApp").classList.add("hidden");
-      document.getElementById("loginCard").classList.remove("hidden");
-      document.getElementById("loginMsg").textContent = "";
-    }
+let currentUser = null;
+let currentRole = null;
+let agentCode = null;
 
-    async function initApp() {
-      const { data: authData } = await supabase.auth.getUser();
-      currentUser = authData.user;
+/* 登入 */
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("loginMsg");
+  msg.textContent = "";
 
-      if (!currentUser) return;
+  if (!email || !password) {
+    msg.textContent = "請輸入帳號密碼";
+    return;
+  }
 
-      const { data: roleRow, error: roleError } = await supabase
-        .from("user_roles")
-        .select("*")
-        .eq("user_id", currentUser.id)
-        .single();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
-      if (roleError || !roleRow || !["staff", "admin"].includes(roleRow.role)) {
-        alert("你沒有版務後台權限");
-        await supabase.auth.signOut();
-        return;
-      }
+  if (error) {
+    msg.textContent = error.message;
+    return;
+  }
 
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("adminApp").classList.remove("hidden");
-      document.getElementById("userInfo").textContent =
-        `目前登入：${roleRow.display_name || currentUser.email}｜角色：${roleRow.role}`;
+  await initApp();
+}
 
-      await loadData();
-    }
+/* 初始化 */
+async function initApp() {
 
-    async function loadData() {
-      let query = supabase
-        .from("credit_applications")
-        .select("*")
-        .order("created_at", { ascending: false });
+  const { data: userData } = await supabase.auth.getUser();
+  currentUser = userData.user;
 
-      const status = document.getElementById("filterStatus").value;
-      const agent = document.getElementById("filterAgent").value.trim();
-      const keyword = document.getElementById("searchKeyword").value.trim().toLowerCase();
+  if (!currentUser) return;
 
-      if (status) query = query.eq("review_status", status);
-      if (agent) query = query.eq("agent_code", agent);
+  const { data: roleData, error } = await supabase
+    .from("user_roles")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .single();
 
-      const { data, error } = await query;
+  if (error || !roleData) {
+    alert("沒有權限");
+    return;
+  }
 
-      if (error) {
-        alert("讀取資料失敗：" + error.message);
-        return;
-      }
+  currentRole = roleData.role;
+  agentCode = roleData.agent_code;
 
-      let rows = data || [];
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("adminApp").classList.remove("hidden");
 
-      if (keyword) {
-        rows = rows.filter(row => {
-          const s = [
-            row.full_name || "",
-            row.phone || "",
-            row.line_id || "",
-            row.company_name || "",
-            row.agent_code || ""
-          ].join(" ").toLowerCase();
-          return s.includes(keyword);
-        });
-      }
+  document.getElementById("userInfo").textContent =
+    `${currentUser.email}（${currentRole}）`;
 
-      const tbody = document.getElementById("tbody");
+  loadData();
+}
 
-      tbody.innerHTML = rows.map(row => `
-        <tr>
-          <td data-label="建立時間">${formatTime(row.created_at)}</td>
-          <td data-label="代理">${escapeHtml(row.agent_code || "-")}</td>
-          <td data-label="會員資料">
-            <div><strong>${escapeHtml(row.full_name || "")}</strong></div>
-            <div class="small">電話：${escapeHtml(row.phone || "")}</div>
-            <div class="small">LINE：${escapeHtml(row.line_id || "")}</div>
-            <div class="small">地址：${escapeHtml(row.current_address || "")}</div>
-            <div class="small">緊急聯絡人：${escapeHtml(row.emergency_contact || "")}</div>
-            <div class="small">關係：${escapeHtml(row.relationship || "")}</div>
-            <div class="small">緊急電話：${escapeHtml(row.emergency_phone || "")}</div>
-          </td>
-          <td data-label="職務資料">
-            <div class="small">公司：${escapeHtml(row.company_name || "")}</div>
-            <div class="small">公司地址：${escapeHtml(row.company_address || "")}</div>
-            <div class="small">公司電話：${escapeHtml(row.company_phone || "")}</div>
-            <div class="small">薪資級距：${escapeHtml(row.monthly_salary_range || "")}</div>
-          </td>
-          <td data-label="狀態 / 備註">
-            <div class="status ${(row.review_status || "待審核")}">${escapeHtml(row.review_status || "待審核")}</div>
-            <textarea id="note-${row.id}" placeholder="版務備註">${escapeTextarea(row.reviewer_note || "")}</textarea>
-          </td>
-          <td data-label="操作">
-            <div class="actions">
-              <select id="status-${row.id}">
-                <option value="待審核" ${(row.review_status || "待審核") === "待審核" ? "selected" : ""}>待審核</option>
-                <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
-                <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
-                <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
-              </select>
-              <button onclick="saveRow(${row.id})">儲存</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
-    }
+/* 載入資料 */
+async function loadData() {
 
-    async function saveRow(id) {
-      const status = document.getElementById(`status-${id}`).value;
-      const note = document.getElementById(`note-${id}`).value.trim();
+  let query = supabase.from("credit_applications").select("*");
 
-      const { error } = await supabase
-        .from("credit_applications")
-        .update({
-          review_status: status,
-          reviewer_note: note,
-          reviewer_user_id: currentUser.id
-        })
-        .eq("id", id);
+  if (currentRole === "agent") {
+    query = query.eq("agent_code", agentCode);
+  }
 
-      if (error) {
-        alert("更新失敗：" + error.message);
-        return;
-      }
+  const { data } = await query.order("created_at", { ascending: false });
 
-      alert("已更新");
-      await loadData();
-    }
+  const tbody = document.getElementById("dataBody");
+  tbody.innerHTML = "";
 
-    function formatTime(v) {
-      if (!v) return "-";
-      try {
-        return new Date(v).toLocaleString("zh-TW");
-      } catch {
-        return v;
-      }
-    }
+  data.forEach(row => {
+    const tr = document.createElement("tr");
 
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+    tr.innerHTML = `
+      <td>${row.full_name}</td>
+      <td>${row.phone}</td>
+      <td>${row.line_id}</td>
+      <td>${row.agent_code || "-"}</td>
+      <td>${row.estimated_credit || "-"}</td>
+      <td><span class="badge ${row.review_status}">
+        ${row.review_status}
+      </span></td>
+      <td>
+        ${currentRole !== "agent" ? `
+        <button onclick="updateStatus('${row.id}','approved')">核准</button>
+        <button onclick="updateStatus('${row.id}','rejected')">拒絕</button>
+        ` : "-"}
+      </td>
+    `;
 
-    function escapeTextarea(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-    }
+    tbody.appendChild(tr);
+  });
+}
 
-    initApp();
-  </script>
+/* 更新狀態 */
+async function updateStatus(id, status) {
+  await supabase
+    .from("credit_applications")
+    .update({ review_status: status })
+    .eq("id", id);
+
+  loadData();
+}
+
+/* 登出 */
+async function logout() {
+  await supabase.auth.signOut();
+  location.reload();
+}
+
+/* 自動登入 */
+initApp();
+</script>
+
 </body>
 </html>
