@@ -3,22 +3,396 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天城娛樂城帳號申請</title>
+  <title>天城娛樂城｜信用額度申請</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: rgba(16, 24, 48, 0.88);
+      --card-2: rgba(255, 255, 255, 0.06);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #eef2ff;
+      --muted: #aab3d1;
+      --primary: #7c5cff;
+      --primary-2: #5eead4;
+      --danger: #ff6b6b;
+      --success: #2dd4bf;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(94, 234, 212, 0.14), transparent 24%),
+        linear-gradient(180deg, #070b16 0%, #0d1326 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero p {
+      margin: 12px auto 0;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-head {
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .step-chip {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--muted);
+      background: var(--card-2);
+    }
+
+    .step-chip.active {
+      color: var(--text);
+      border-color: rgba(124, 92, 255, 0.6);
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.18), rgba(94, 234, 212, 0.08));
+    }
+
+    .form-body {
+      padding: 24px;
+    }
+
+    .section-title {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #dbe5ff;
+    }
+
+    .required::after {
+      content: " *";
+      color: #ff8c8c;
+    }
+
+    input, select {
+      width: 100%;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: 0 14px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #8c97bd;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(124, 92, 255, 0.85);
+      box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.12);
+    }
+
+    .helper {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .error {
+      margin-top: 7px;
+      font-size: 12px;
+      color: #ff9a9a;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .msg {
+      margin: 0 24px 20px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .msg.show {
+      display: block;
+    }
+
+    .msg.error {
+      background: rgba(255, 107, 107, 0.12);
+      border: 1px solid rgba(255, 107, 107, 0.26);
+      color: #ffd0d0;
+    }
+
+    .msg.success {
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.26);
+      color: #d2fff7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 0 24px 24px;
+    }
+
+    button {
+      min-width: 120px;
+      height: 46px;
+      border: 0;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #6d6bff 52%, var(--primary-2));
+      color: white;
+      box-shadow: 0 12px 30px rgba(124, 92, 255, 0.28);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 680px) {
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .grid,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column-reverse;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>天城娛樂城帳號申請</h2>
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge">信用額度審核申請 · 線上填寫</div>
+      <h1>天城娛樂城帳號開通申請</h1>
+      <p>請先填寫基本資料，再填寫職務信用額度評估資訊。完成後系統將送交審核，審核人員會依資料進行後續確認。</p>
+    </div>
 
-  <input id="name" placeholder="姓名" /><br><br>
-  <input id="phone" placeholder="電話" /><br><br>
-  <input id="line" placeholder="LINE ID" /><br><br>
-  <input id="line" placeholder="現居地址" /><br><br>
-  <input id="line" placeholder="緊急聯絡人姓名" /><br><br>
-  <input id="line" placeholder="緊急聯絡人關係" /><br><br>
-  <input id="line" placeholder="緊急聯絡人電話" /><br><br>
+    <div class="panel">
+      <div class="panel-head">
+        <strong>線上申請表</strong>
+        <div class="steps">
+          <div id="chip1" class="step-chip active">第 1 步｜基本資料</div>
+          <div id="chip2" class="step-chip">第 2 步｜職務信用額度評估</div>
+        </div>
+      </div>
 
-  <button onclick="submitForm()">送出</button>
+      <div id="step1" class="form-body">
+        <h3 class="section-title">基本資料</h3>
+        <div class="grid">
+          <div class="field">
+            <label class="required" for="name">姓名</label>
+            <input id="name" placeholder="請輸入姓名" />
+            <div class="error" id="err-name"></div>
+          </div>
 
-  <p id="msg" style="margin-top: 16px; color: red;"></p>
+          <div class="field">
+            <label class="required" for="phone">手機號碼</label>
+            <input id="phone" placeholder="例如：0912345678" inputmode="numeric" maxlength="10" />
+            <div class="helper">限台灣手機格式，需為 09 開頭共 10 碼。</div>
+            <div class="error" id="err-phone"></div>
+          </div>
+
+          <div class="field">
+            <label class="required" for="lineId">LINE ID</label>
+            <input id="lineId" placeholder="請輸入 LINE ID" />
+            <div class="error" id="err-lineId"></div>
+          </div>
+
+          <div class="field full">
+            <label class="required" for="address">現居地址</label>
+            <input id="address" placeholder="請輸入現居地址" />
+            <div class="error" id="err-address"></div>
+          </div>
+
+          <div class="field">
+            <label class="required" for="emergencyName">緊急聯絡人姓名</label>
+            <input id="emergencyName" placeholder="請輸入緊急聯絡人姓名" />
+            <div class="error" id="err-emergencyName"></div>
+          </div>
+
+          <div class="field">
+            <label class="required" for="emergencyRelation">緊急聯絡人關係</label>
+            <input id="emergencyRelation" placeholder="例如：配偶、父母、兄弟姊妹" />
+            <div class="error" id="err-emergencyRelation"></div>
+          </div>
+
+          <div class="field full">
+            <label class="required" for="emergencyPhone">緊急聯絡人電話</label>
+            <input id="emergencyPhone" placeholder="請輸入緊急聯絡人電話" />
+            <div class="error" id="err-emergencyPhone"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="step2" class="form-body hidden">
+        <h3 class="section-title">💼 職務信用額度評估資訊</h3>
+        <div class="grid">
+          <div class="field full">
+            <label class="required" for="companyName">任職公司全稱</label>
+            <input id="companyName" placeholder="請輸入任職公司全稱" />
+            <div class="error" id="err-companyName"></div>
+          </div>
+
+          <div class="field full">
+            <label class="required" for="companyAddress">公司地址</label>
+            <input id="companyAddress" placeholder="請輸入公司地址" />
+            <div class="error" id="err-companyAddress"></div>
+          </div>
+
+          <div class="field">
+            <label class="required" for="companyPhone">公司電話</label>
+            <input id="companyPhone" placeholder="請輸入公司電話" />
+            <div class="error" id="err-companyPhone"></div>
+          </div>
+
+          <div class="field">
+            <label class="required" for="salaryRange">月薪級距</label>
+            <select id="salaryRange">
+              <option value="">請選擇</option>
+              <option value="A.3萬以下">A.3萬以下</option>
+              <option value="B.3-5萬">B.3-5萬</option>
+              <option value="C.5-8萬">C.5-8萬</option>
+              <option value="D.8萬以上">D.8萬以上</option>
+            </select>
+            <div class="error" id="err-salaryRange"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="msg" class="msg"></div>
+
+      <div class="actions">
+        <button id="backBtn" class="btn-secondary hidden" type="button" onclick="backStep1()">上一步</button>
+        <button id="nextBtn" class="btn-primary" type="button" onclick="goStep2()">下一步</button>
+        <button id="submitBtn" class="btn-primary hidden" type="button" onclick="submitForm()">送出申請</button>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      本申請資料僅供審核與聯繫用途。送出後請留意聯絡通知。
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -27,57 +401,179 @@
       "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
     );
 
-    async function submitForm() {
+    function setMessage(type, text) {
       const msg = document.getElementById("msg");
-      msg.style.color = "red";
+      msg.className = `msg show ${type}`;
+      msg.textContent = text;
+    }
+
+    function clearMessage() {
+      const msg = document.getElementById("msg");
+      msg.className = "msg";
       msg.textContent = "";
+    }
+
+    function setError(id, text) {
+      const el = document.getElementById(`err-${id}`);
+      if (!el) return;
+      el.textContent = text || "";
+      el.classList.toggle("show", Boolean(text));
+    }
+
+    function clearErrors() {
+      [
+        "name", "phone", "lineId", "address", "emergencyName", "emergencyRelation", "emergencyPhone",
+        "companyName", "companyAddress", "companyPhone", "salaryRange"
+      ].forEach(id => setError(id, ""));
+    }
+
+    function isTaiwanMobile(value) {
+      return /^09\d{8}$/.test(value);
+    }
+
+    function validateStep1() {
+      clearErrors();
+      clearMessage();
+      let ok = true;
 
       const name = document.getElementById("name").value.trim();
       const phone = document.getElementById("phone").value.trim();
-      const line = document.getElementById("line").value.trim();
+      const lineId = document.getElementById("lineId").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const emergencyName = document.getElementById("emergencyName").value.trim();
+      const emergencyRelation = document.getElementById("emergencyRelation").value.trim();
+      const emergencyPhone = document.getElementById("emergencyPhone").value.trim();
 
-      if (!name || !phone || !line) {
-        msg.textContent = "請先填寫姓名、電話、LINE ID、現居地址、緊急聯絡人姓名、緊急聯絡人關係、緊急聯絡人電話";
-        return;
+      if (!name) { setError("name", "請填寫姓名"); ok = false; }
+      if (!phone) {
+        setError("phone", "請填寫手機號碼");
+        ok = false;
+      } else if (!isTaiwanMobile(phone)) {
+        setError("phone", "手機號碼格式錯誤，需為台灣手機格式，例如 0912345678");
+        ok = false;
       }
+      if (!lineId) { setError("lineId", "請填寫 LINE ID"); ok = false; }
+      if (!address) { setError("address", "請填寫現居地址"); ok = false; }
+      if (!emergencyName) { setError("emergencyName", "請填寫緊急聯絡人姓名"); ok = false; }
+      if (!emergencyRelation) { setError("emergencyRelation", "請填寫緊急聯絡人關係"); ok = false; }
+      if (!emergencyPhone) { setError("emergencyPhone", "請填寫緊急聯絡人電話"); ok = false; }
+
+      if (!ok) {
+        setMessage("error", "請先完整填寫第 1 頁資料。手機號碼需符合台灣手機格式。\n");
+      }
+      return ok;
+    }
+
+    function validateStep2() {
+      let ok = true;
+      const companyName = document.getElementById("companyName").value.trim();
+      const companyAddress = document.getElementById("companyAddress").value.trim();
+      const companyPhone = document.getElementById("companyPhone").value.trim();
+      const salaryRange = document.getElementById("salaryRange").value;
+
+      if (!companyName) { setError("companyName", "請填寫任職公司全稱"); ok = false; }
+      if (!companyAddress) { setError("companyAddress", "請填寫公司地址"); ok = false; }
+      if (!companyPhone) { setError("companyPhone", "請填寫公司電話"); ok = false; }
+      if (!salaryRange) { setError("salaryRange", "請選擇月薪級距"); ok = false; }
+
+      if (!ok) {
+        setMessage("error", "請完整填寫第 2 頁職務信用額度評估資訊。");
+      }
+      return ok;
+    }
+
+    function goStep2() {
+      if (!validateStep1()) return;
+      document.getElementById("step1").classList.add("hidden");
+      document.getElementById("step2").classList.remove("hidden");
+      document.getElementById("chip1").classList.remove("active");
+      document.getElementById("chip2").classList.add("active");
+      document.getElementById("backBtn").classList.remove("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+      document.getElementById("submitBtn").classList.remove("hidden");
+      clearMessage();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function backStep1() {
+      document.getElementById("step2").classList.add("hidden");
+      document.getElementById("step1").classList.remove("hidden");
+      document.getElementById("chip2").classList.remove("active");
+      document.getElementById("chip1").classList.add("active");
+      document.getElementById("backBtn").classList.add("hidden");
+      document.getElementById("nextBtn").classList.remove("hidden");
+      document.getElementById("submitBtn").classList.add("hidden");
+      clearMessage();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function submitForm() {
+      clearErrors();
+      clearMessage();
+      if (!validateStep1()) return;
+      if (!validateStep2()) return;
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "送出中...";
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const lineId = document.getElementById("lineId").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const emergencyName = document.getElementById("emergencyName").value.trim();
+      const emergencyRelation = document.getElementById("emergencyRelation").value.trim();
+      const emergencyPhone = document.getElementById("emergencyPhone").value.trim();
+
+      const companyName = document.getElementById("companyName").value.trim();
+      const companyAddress = document.getElementById("companyAddress").value.trim();
+      const companyPhone = document.getElementById("companyPhone").value.trim();
+      const salaryRange = document.getElementById("salaryRange").value;
 
       try {
-        const { data, error } = await supabaseClient
+        const { error } = await supabaseClient
           .from("credit_applications")
           .insert([
             {
               application_no: Date.now().toString(),
+              review_status: "待審核",
               full_name: name,
               phone: phone,
-              line_id: line,
-              national_id: "test",
-              current_address: "test",
-              emergency_contact: "test",
-              relationship: "test",
-              emergency_phone: "test",
-              company_name: "test",
-              company_address: "test",
-              company_phone: "test",
-              monthly_salary_range: "B"
+              line_id: lineId,
+              current_address: address,
+              emergency_contact: emergencyName,
+              relationship: emergencyRelation,
+              emergency_phone: emergencyPhone,
+              company_name: companyName,
+              company_address: companyAddress,
+              company_phone: companyPhone,
+              monthly_salary_range: salaryRange,
+              monthly_salary_label: salaryRange,
+              national_id: "test"
             }
           ]);
 
         if (error) {
-          console.error("Supabase error:", error);
-          msg.textContent = "送出失敗：" + error.message;
+          console.error(error);
+          setMessage("error", "送出失敗：" + error.message);
           return;
         }
 
-        console.log("Insert success:", data);
-        msg.style.color = "green";
-        msg.textContent = "送出成功！";
+        setMessage("success", "送出成功，資料已進入審核。請留意後續通知。");
 
-        document.getElementById("name").value = "";
-        document.getElementById("phone").value = "";
-        document.getElementById("line").value = "";
+        [
+          "name", "phone", "lineId", "address", "emergencyName", "emergencyRelation", "emergencyPhone",
+          "companyName", "companyAddress", "companyPhone"
+        ].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("salaryRange").value = "";
+
+        backStep1();
       } catch (err) {
-        console.error("JS error:", err);
-        msg.textContent = "程式錯誤：" + err.message;
+        console.error(err);
+        setMessage("error", "程式錯誤：" + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "送出申請";
       }
     }
   </script>
