@@ -464,7 +464,7 @@
           <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">系統預估結果</div>
           <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
             <div>
-              <div style="font-size:13px; color:var(--muted);">預估信用額度</div>
+              <div style="font-size:13px; color:var(--muted);">預估可申請額度，實際核准額度仍以人工審核結果為準。</div>
               <div id="estimateCredit" style="font-size:28px; font-weight:700; margin-top:4px;">—</div>
             </div>
             <div>
@@ -543,10 +543,10 @@
 
     function getEstimatedCredit(salaryRange) {
       const map = {
-        "A.3萬以下": "3,000",
+        "A.3萬以下": "4,500",
         "B.3-5萬": "5,000",
-        "C.5-8萬": "8,000",
-        "D.8萬以上": "12,000"
+        "C.5-8萬": "5,500",
+        "D.8萬以上": "6,000"
       };
       return map[salaryRange] || "—";
     }
