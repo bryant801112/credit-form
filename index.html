@@ -166,6 +166,11 @@
       box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.12);
     }
 
+    select option {
+      color: #000000;
+      background-color: #ffffff;
+    }
+
     .helper {
       margin-top: 8px;
       font-size: 12px;
@@ -190,6 +195,7 @@
       font-size: 14px;
       display: none;
       line-height: 1.6;
+      white-space: pre-line;
     }
 
     .msg.show {
@@ -249,7 +255,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .footer-note {
@@ -260,13 +266,66 @@
       line-height: 1.7;
     }
 
+    .success-page {
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .success-box {
+      max-width: 520px;
+      margin: 0 auto 18px;
+      text-align: left;
+      background: var(--card-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .success-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      max-width: 520px;
+      margin: 0 auto 18px;
+    }
+
+    .success-grid-item {
+      background: var(--card-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .line-btn {
+      text-decoration: none;
+      min-width: 200px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #06c755, #00b900);
+      color: white;
+      box-shadow: 0 12px 30px rgba(6, 199, 85, 0.28);
+      padding: 0 18px;
+    }
+
     @media (max-width: 680px) {
       .hero h1 {
         font-size: 28px;
       }
 
       .grid,
-      .steps {
+      .steps,
+      .success-grid {
         grid-template-columns: 1fr;
       }
 
@@ -274,7 +333,8 @@
         flex-direction: column-reverse;
       }
 
-      button {
+      button,
+      .line-btn {
         width: 100%;
       }
     }
@@ -285,12 +345,12 @@
     <div class="hero">
       <div class="badge">信用額度審核申請 · 線上填寫</div>
       <h1>天城娛樂城帳號開通申請</h1>
-      <p>請先填寫基本資料，再填寫職務信用額度評估資訊。完成後系統將送交審核，審核人員會依資料進行後續確認。</p>
+      <p id="heroDesc">請先填寫基本資料，再填寫職務信用額度評估資訊。完成後系統將送交審核，審核人員會依資料進行後續確認。</p>
     </div>
 
-    <div class="panel">
+    <div id="formPanel" class="panel">
       <div class="panel-head">
-        <strong>線上申請表</strong>
+        <strong id="formTitle">線上申請表</strong>
         <div class="steps">
           <div id="chip1" class="step-chip active">第 1 步｜基本資料</div>
           <div id="chip2" class="step-chip">第 2 步｜職務信用額度評估</div>
@@ -355,8 +415,8 @@
           </div>
 
           <div class="field full">
-            <label class="required" for="companyAddress">公司地址</label>
-            <input id="companyAddress" placeholder="請輸入公司地址" />
+            <label for="companyAddress">公司地址</label>
+            <input id="companyAddress" placeholder="請輸入公司地址（可不填）" />
             <div class="error" id="err-companyAddress"></div>
           </div>
 
@@ -389,9 +449,59 @@
       </div>
     </div>
 
-    <div class="footer-note">
-      本申請資料僅供審核與聯繫用途。送出後請留意聯絡通知。
+    <div id="successPage" class="panel hidden" style="margin-top:20px;">
+      <div class="panel-head">
+        <strong>申請已送出</strong>
+      </div>
+      <div class="form-body success-page">
+        <div class="success-icon">✓</div>
+        <h3 class="section-title" style="margin-bottom:10px;">申請已送出，請立即聯繫版務</h3>
+        <p style="color:var(--muted); margin:0 auto 18px; max-width:520px;">
+          你的資料已成功送出，系統已交由版務審核。為加快核對與開通速度，請立即點擊下方按鈕聯繫版務。
+        </p>
+
+        <div class="success-box">
+          <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">系統預估結果</div>
+          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <div>
+              <div style="font-size:13px; color:var(--muted);">預估信用額度</div>
+              <div id="estimateCredit" style="font-size:28px; font-weight:700; margin-top:4px;">—</div>
+            </div>
+            <div>
+              <div style="font-size:13px; color:var(--muted);">審核狀態</div>
+              <div style="font-size:28px; font-weight:700; margin-top:4px; color:var(--success);">待審核</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--muted); margin-top:10px; line-height:1.7;">
+            實際核准額度仍以人工審核結果為準。建議你立即聯繫版務，提供申請姓名與手機，以加快處理流程。
+          </div>
+        </div>
+
+        <div class="success-grid">
+          <div class="success-grid-item">
+            <div style="font-size:13px; color:var(--muted);">下一步建議</div>
+            <div style="font-size:16px; font-weight:700; margin-top:6px;">立即聯繫版務</div>
+            <div style="font-size:13px; color:var(--muted); margin-top:6px; line-height:1.7;">主動提供申請姓名與電話，可縮短審核等待時間。</div>
+          </div>
+          <div class="success-grid-item">
+            <div style="font-size:13px; color:var(--muted);">資料狀態</div>
+            <div style="font-size:16px; font-weight:700; margin-top:6px;">已成功送出</div>
+            <div style="font-size:13px; color:var(--muted); margin-top:6px; line-height:1.7;">系統已完成建檔，等待版務核對與後續通知。</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a id="staffLineBtn" href="https://line.me/ti/p/rVBnRpG5SY" target="_blank" rel="noopener noreferrer" class="line-btn">👉 點我聯繫版務LINE</a>
+          <button type="button" class="btn-secondary" onclick="restartForm()">重新填寫</button>
+        </div>
+
+        <p style="margin-top:14px; font-size:12px; color:var(--muted);">
+          建議截圖此頁或告知申請姓名，方便版務快速查單。
+        </p>
+      </div>
     </div>
+
+    <div class="footer-note">本申請資料僅供審核與聯繫用途。送出後請留意聯絡通知。</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -428,7 +538,17 @@
     }
 
     function isTaiwanMobile(value) {
-      return /^09\d{8}$/.test(value);
+      return /^09\\d{8}$/.test(value);
+    }
+
+    function getEstimatedCredit(salaryRange) {
+      const map = {
+        "A.3萬以下": "3,000",
+        "B.3-5萬": "5,000",
+        "C.5-8萬": "8,000",
+        "D.8萬以上": "12,000"
+      };
+      return map[salaryRange] || "—";
     }
 
     function validateStep1() {
@@ -459,7 +579,7 @@
       if (!emergencyPhone) { setError("emergencyPhone", "請填寫緊急聯絡人電話"); ok = false; }
 
       if (!ok) {
-        setMessage("error", "請先完整填寫第 1 頁資料。手機號碼需符合台灣手機格式。\n");
+        setMessage("error", "請先完整填寫第 1 頁資料。手機號碼需符合台灣手機格式。");
       }
       return ok;
     }
@@ -472,12 +592,11 @@
       const salaryRange = document.getElementById("salaryRange").value;
 
       if (!companyName) { setError("companyName", "請填寫任職公司全稱"); ok = false; }
-      if (!companyAddress) { setError("companyAddress", "請填寫公司地址"); ok = false; }
       if (!companyPhone) { setError("companyPhone", "請填寫公司電話"); ok = false; }
       if (!salaryRange) { setError("salaryRange", "請選擇月薪級距"); ok = false; }
 
       if (!ok) {
-        setMessage("error", "請完整填寫第 2 頁職務信用額度評估資訊。");
+        setMessage("error", "請完整填寫第 2 頁職務信用額度評估資訊。公司地址可不填。");
       }
       return ok;
     }
@@ -545,7 +664,7 @@
               relationship: emergencyRelation,
               emergency_phone: emergencyPhone,
               company_name: companyName,
-              company_address: companyAddress,
+              company_address: companyAddress || null,
               company_phone: companyPhone,
               monthly_salary_range: salaryRange,
               monthly_salary_label: salaryRange,
@@ -559,16 +678,13 @@
           return;
         }
 
-        // 成功後顯示轉換頁
-        document.querySelector('.panel').innerHTML = `
-          <div style="padding:40px;text-align:center">
-            <h2 style="font-size:26px;margin-bottom:10px">申請已送出 ✅</h2>
-            <p style="color:#aab3d1;margin-bottom:20px">您的資料已進入審核流程，請留意後續通知。</p>
-            <div style="margin-top:20px">
-              <a href="https://line.me/ti/p/rVBnRpG5SY" target="_blank" style="display:inline-block;padding:12px 20px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#5eead4);color:#fff;text-decoration:none;font-weight:bold">加入LINE版務審核</a>
-            </div>
-          </div>
-        `;
+        document.getElementById("estimateCredit").textContent = getEstimatedCredit(salaryRange);
+        document.getElementById("formPanel").classList.add("hidden");
+        document.getElementById("successPage").classList.remove("hidden");
+
+        setTimeout(() => {
+          window.open("https://line.me/ti/p/rVBnRpG5SY", "_blank");
+        }, 1200);
       } catch (err) {
         console.error(err);
         setMessage("error", "程式錯誤：" + err.message);
@@ -576,6 +692,26 @@
         submitBtn.disabled = false;
         submitBtn.textContent = "送出申請";
       }
+    }
+
+    function restartForm() {
+      document.getElementById("successPage").classList.add("hidden");
+      document.getElementById("formPanel").classList.remove("hidden");
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("lineId").value = "";
+      document.getElementById("address").value = "";
+      document.getElementById("emergencyName").value = "";
+      document.getElementById("emergencyRelation").value = "";
+      document.getElementById("emergencyPhone").value = "";
+      document.getElementById("companyName").value = "";
+      document.getElementById("companyAddress").value = "";
+      document.getElementById("companyPhone").value = "";
+      document.getElementById("salaryRange").value = "";
+      backStep1();
+      clearErrors();
+      clearMessage();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   </script>
 </body>
