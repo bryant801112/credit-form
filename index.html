@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天城娛樂城｜新會員快速審核</title>
+  <title>天城娛樂城｜信用額度申請</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -345,12 +345,12 @@
     <div class="hero">
       <div class="badge">信用額度審核申請 · 線上填寫</div>
       <h1>天城娛樂城帳號開通申請</h1>
-      <p id="heroDesc">請先填寫基本資料，再填寫職務信用額度評估資訊。完成後系統將送交審核，審核人員會依資料進行後續確認。</p>
+      <p>請先填寫基本資料，再填寫職務信用額度評估資訊。完成後系統將送交審核，審核人員會依資料進行後續確認。</p>
     </div>
 
     <div id="formPanel" class="panel">
       <div class="panel-head">
-        <strong id="formTitle">線上申請表</strong>
+        <strong>線上申請表</strong>
         <div class="steps">
           <div id="chip1" class="step-chip active">第 1 步｜基本資料</div>
           <div id="chip2" class="step-chip">第 2 步｜職務信用額度評估</div>
@@ -538,8 +538,7 @@
     }
 
     function isTaiwanMobile(value) {
-      return /^09\d{8}$/.test(value);
-    }
+      return /^09\d{8}$/.test(String(value).trim());
     }
 
     function getEstimatedCredit(salaryRange) {
@@ -566,6 +565,7 @@
       const emergencyPhone = document.getElementById("emergencyPhone").value.trim();
 
       if (!name) { setError("name", "請填寫姓名"); ok = false; }
+
       if (!phone) {
         setError("phone", "請填寫手機號碼");
         ok = false;
@@ -573,6 +573,7 @@
         setError("phone", "手機號碼格式錯誤，需為台灣手機格式，例如 0912345678");
         ok = false;
       }
+
       if (!lineId) { setError("lineId", "請填寫 LINE ID"); ok = false; }
       if (!address) { setError("address", "請填寫現居地址"); ok = false; }
       if (!emergencyName) { setError("emergencyName", "請填寫緊急聯絡人姓名"); ok = false; }
@@ -586,9 +587,11 @@
     }
 
     function validateStep2() {
+      clearErrors();
+      clearMessage();
       let ok = true;
+
       const companyName = document.getElementById("companyName").value.trim();
-      const companyAddress = document.getElementById("companyAddress").value.trim();
       const companyPhone = document.getElementById("companyPhone").value.trim();
       const salaryRange = document.getElementById("salaryRange").value;
 
@@ -597,7 +600,7 @@
       if (!salaryRange) { setError("salaryRange", "請選擇月薪級距"); ok = false; }
 
       if (!ok) {
-        setMessage("error", "請完整填寫第 2 頁職務信用額度評估資訊。公司地址可不填。");
+        setMessage("error", "請完整填寫第 2 頁職務信用額度評估資訊。");
       }
       return ok;
     }
