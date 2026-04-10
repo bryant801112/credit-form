@@ -3,330 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天城娛樂城｜版務審核後台</title>
+  <title>版務審核後台</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root {
-      --bg: #0b1020;
-      --panel: #121a33;
-      --panel-2: #0f1730;
-      --line: rgba(255,255,255,.08);
-      --text: #eef2ff;
-      --muted: #aab3d1;
-      --primary: #6c63ff;
-      --primary-2: #00c6ff;
-      --success: #00e5a8;
-      --danger: #ff6b6b;
-      --warn: #ffd76a;
+    body{
+      margin:0;
+      font-family:Arial,"Microsoft JhengHei",sans-serif;
+      background:#0b1020;
+      color:#eef2ff;
+      padding:24px;
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, "Microsoft JhengHei", sans-serif;
-      background: linear-gradient(135deg, #0b1020, #121a33);
-      color: var(--text);
-      padding: 24px;
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
     }
-
-    .wrap {
-      max-width: 1380px;
-      margin: 0 auto;
+    .card{
+      background:#121a33;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:20px;
+      margin-bottom:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
     }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 12px 40px rgba(0,0,0,.28);
-      margin-bottom: 20px;
+    h1,h2{margin-top:0}
+    .small{
+      font-size:12px;
+      color:#aab3d1;
+      line-height:1.7;
     }
-
-    h1, h2, h3 {
-      margin-top: 0;
+    .hidden{display:none}
+    input,select,textarea,button{
+      font-family:inherit;
+      font-size:14px;
     }
-
-    .small {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.7;
+    input,select,textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#0f1730;
+      color:#fff;
+      box-sizing:border-box;
     }
-
-    .hidden {
-      display: none !important;
+    textarea{
+      resize:vertical;
+      min-height:80px;
     }
-
-    input, select, textarea, button {
-      font-family: inherit;
-      font-size: 14px;
+    select option{
+      color:#000;
+      background:#fff;
     }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 11px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: var(--panel-2);
-      color: #fff;
-      outline: none;
+    button{
+      padding:10px 14px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      color:#fff;
+      font-weight:700;
+      background:linear-gradient(90deg,#6c63ff,#00c6ff);
     }
-
-    textarea {
-      resize: vertical;
-      min-height: 86px;
+    .btn-secondary{
+      background:#2a355e;
     }
-
-    select option {
-      color: #000;
-      background: #fff;
+    .login-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr 120px;
+      gap:12px;
+      margin-top:14px;
     }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: rgba(108,99,255,.65);
-      box-shadow: 0 0 0 3px rgba(108,99,255,.15);
+    .toolbar{
+      display:grid;
+      grid-template-columns:1fr 180px 180px 120px;
+      gap:12px;
+      margin-bottom:16px;
     }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 11px 14px;
-      cursor: pointer;
-      color: #fff;
-      font-weight: 700;
-      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
     }
-
-    button:hover {
-      opacity: .95;
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:#aab3d1;
+      font-size:12px;
     }
-
-    button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
+    table{
+      width:100%;
+      border-collapse:collapse;
     }
-
-    .btn-secondary {
-      background: #2a355e;
+    th,td{
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:left;
+      vertical-align:top;
+      padding:12px 10px;
+      font-size:13px;
     }
-
-    .btn-danger {
-      background: linear-gradient(90deg, #ff6b6b, #ff8b8b);
+    th{
+      color:#aab3d1;
+      font-weight:600;
+      background:#121a33;
     }
-
-    .btn-success {
-      background: linear-gradient(90deg, #00c78c, #00e5a8);
+    .status{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:8px;
     }
-
-    .login-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 130px;
-      gap: 12px;
-      margin-top: 14px;
+    .待審核{background:rgba(255,193,7,.18);color:#ffd76a}
+    .已聯繫{background:rgba(0,198,255,.18);color:#7be7ff}
+    .通過{background:rgba(0,229,168,.18);color:#7effd6}
+    .拒絕{background:rgba(255,107,107,.18);color:#ffb3b3}
+    .actions{
+      display:grid;
+      gap:8px;
+      min-width:170px;
     }
-
-    .login-msg {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #ffb3b3;
+    .msg{
+      margin-top:12px;
+      color:#ffb3b3;
+      font-size:13px;
     }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .tag-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .stat {
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-    }
-
-    .stat .label {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .stat .value {
-      margin-top: 6px;
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1.1fr 180px 160px 140px 120px;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      text-align: left;
-      vertical-align: top;
-      padding: 12px 10px;
-      font-size: 13px;
-    }
-
-    th {
-      color: var(--muted);
-      font-weight: 600;
-      background: var(--panel);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    .status {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .status-待審核 {
-      background: rgba(255,193,7,.18);
-      color: var(--warn);
-    }
-
-    .status-已聯繫 {
-      background: rgba(0,198,255,.18);
-      color: #7be7ff;
-    }
-
-    .status-通過 {
-      background: rgba(0,229,168,.18);
-      color: #7effd6;
-    }
-
-    .status-拒絕 {
-      background: rgba(255,107,107,.18);
-      color: #ffb3b3;
-    }
-
-    .cell-list {
-      display: grid;
-      gap: 4px;
-    }
-
-    .cell-list div {
-      line-height: 1.5;
-    }
-
-    .cell-list strong {
-      color: #fff;
-    }
-
-    .action-grid {
-      display: grid;
-      gap: 8px;
-      min-width: 180px;
-    }
-
-    .table-wrap {
-      overflow: auto;
-      max-height: 70vh;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-    }
-
-    .empty {
-      text-align: center;
-      padding: 30px 12px;
-      color: var(--muted);
-    }
-
-    @media (max-width: 1080px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    @media (max-width: 980px){
+      .login-grid,.toolbar{grid-template-columns:1fr}
+      table,thead,tbody,th,td,tr{display:block}
+      thead{display:none}
+      tr{
+        border:1px solid rgba(255,255,255,.08);
+        border-radius:14px;
+        padding:10px;
+        margin-bottom:14px;
+        background:#0f1730;
       }
-
-      .toolbar,
-      .login-grid {
-        grid-template-columns: 1fr;
+      td{
+        border-bottom:none;
+        padding:8px 0;
       }
-    }
-
-    @media (max-width: 860px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      .table-wrap {
-        max-height: none;
-        overflow: visible;
-        border: none;
-      }
-
-      tr {
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 10px;
-        margin-bottom: 14px;
-        background: var(--panel-2);
-      }
-
-      td {
-        border-bottom: none;
-        padding: 8px 0;
-      }
-
-      td::before {
-        content: attr(data-label);
-        display: block;
-        color: var(--muted);
-        font-size: 12px;
-        margin-bottom: 4px;
-      }
-
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .stats {
-        grid-template-columns: 1fr;
+      td::before{
+        content:attr(data-label);
+        display:block;
+        color:#aab3d1;
+        font-size:12px;
+        margin-bottom:4px;
       }
     }
   </style>
@@ -335,15 +160,13 @@
   <div class="wrap">
     <div class="card" id="loginCard">
       <h1>版務審核後台登入</h1>
-      <div class="small">僅限 admin / staff 帳號登入。代理後台會另外做成 agent.html。</div>
-
+      <div class="small">僅限 admin / staff 使用。</div>
       <div class="login-grid">
         <input id="email" type="email" placeholder="登入 Email">
         <input id="password" type="password" placeholder="登入密碼">
         <button onclick="login()">登入</button>
       </div>
-
-      <div id="loginMsg" class="login-msg"></div>
+      <div id="loginMsg" class="msg"></div>
     </div>
 
     <div id="adminApp" class="hidden">
@@ -353,34 +176,9 @@
             <h2 style="margin-bottom:6px;">信用申請審核後台</h2>
             <div class="small" id="userInfo">未登入</div>
           </div>
-
-          <div class="tag-row">
-            <span class="tag">版務可查看全部</span>
-            <span class="tag">可更新狀態 / 備註</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <span class="tag">admin / staff 可看全部</span>
             <button class="btn-secondary" onclick="logout()">登出</button>
-          </div>
-        </div>
-
-        <div class="stats">
-          <div class="stat">
-            <div class="label">全部申請</div>
-            <div class="value" id="statAll">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">待審核</div>
-            <div class="value" id="statPending">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">已聯繫</div>
-            <div class="value" id="statContacted">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">通過</div>
-            <div class="value" id="statApproved">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">拒絕</div>
-            <div class="value" id="statRejected">0</div>
           </div>
         </div>
 
@@ -394,26 +192,22 @@
             <option value="拒絕">拒絕</option>
           </select>
           <input id="filterAgent" placeholder="代理代碼，例如 A001">
-          <input id="filterDate" type="date">
           <button onclick="loadData()">查詢</button>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>建立時間</th>
-                <th>代理</th>
-                <th>會員資料</th>
-                <th>職務資料</th>
-                <th>審核狀態 / 備註</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-          <div id="emptyBox" class="empty hidden">目前沒有符合條件的資料。</div>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>建立時間</th>
+              <th>代理</th>
+              <th>會員資料</th>
+              <th>職務資料</th>
+              <th>狀態 / 備註</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -425,8 +219,6 @@
     );
 
     let currentUser = null;
-    let currentRole = null;
-    let currentRows = [];
 
     async function login() {
       const email = document.getElementById("email").value.trim();
@@ -449,20 +241,13 @@
       document.getElementById("adminApp").classList.add("hidden");
       document.getElementById("loginCard").classList.remove("hidden");
       document.getElementById("loginMsg").textContent = "";
-      currentUser = null;
-      currentRole = null;
-      currentRows = [];
     }
 
     async function initApp() {
       const { data: authData } = await supabase.auth.getUser();
       currentUser = authData.user;
 
-      if (!currentUser) {
-        document.getElementById("adminApp").classList.add("hidden");
-        document.getElementById("loginCard").classList.remove("hidden");
-        return;
-      }
+      if (!currentUser) return;
 
       const { data: roleRow, error: roleError } = await supabase
         .from("user_roles")
@@ -473,12 +258,8 @@
       if (roleError || !roleRow || !["staff", "admin"].includes(roleRow.role)) {
         alert("你沒有版務後台權限");
         await supabase.auth.signOut();
-        document.getElementById("adminApp").classList.add("hidden");
-        document.getElementById("loginCard").classList.remove("hidden");
         return;
       }
-
-      currentRole = roleRow.role;
 
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("adminApp").classList.remove("hidden");
@@ -496,21 +277,10 @@
 
       const status = document.getElementById("filterStatus").value;
       const agent = document.getElementById("filterAgent").value.trim();
-      const date = document.getElementById("filterDate").value;
       const keyword = document.getElementById("searchKeyword").value.trim().toLowerCase();
 
-      if (status) {
-        query = query.eq("review_status", status);
-      }
-
-      if (agent) {
-        query = query.eq("agent_code", agent);
-      }
-
-      if (date) {
-        query = query.gte("created_at", date + "T00:00:00")
-                     .lt("created_at", date + "T23:59:59");
-      }
+      if (status) query = query.eq("review_status", status);
+      if (agent) query = query.eq("agent_code", agent);
 
       const { data, error } = await query;
 
@@ -523,82 +293,44 @@
 
       if (keyword) {
         rows = rows.filter(row => {
-          const text = [
+          const s = [
             row.full_name || "",
             row.phone || "",
             row.line_id || "",
             row.company_name || "",
             row.agent_code || ""
           ].join(" ").toLowerCase();
-          return text.includes(keyword);
+          return s.includes(keyword);
         });
       }
 
-      currentRows = rows;
-      renderStats(rows);
-      renderRows(rows);
-    }
-
-    function renderStats(rows) {
-      const countStatus = (status) => rows.filter(r => (r.review_status || "待審核") === status).length;
-
-      document.getElementById("statAll").textContent = rows.length;
-      document.getElementById("statPending").textContent = countStatus("待審核");
-      document.getElementById("statContacted").textContent = countStatus("已聯繫");
-      document.getElementById("statApproved").textContent = countStatus("通過");
-      document.getElementById("statRejected").textContent = countStatus("拒絕");
-    }
-
-    function renderRows(rows) {
       const tbody = document.getElementById("tbody");
-      const emptyBox = document.getElementById("emptyBox");
-
-      if (!rows.length) {
-        tbody.innerHTML = "";
-        emptyBox.classList.remove("hidden");
-        return;
-      }
-
-      emptyBox.classList.add("hidden");
 
       tbody.innerHTML = rows.map(row => `
         <tr>
           <td data-label="建立時間">${formatTime(row.created_at)}</td>
-
-          <td data-label="代理">
-            <div class="cell-list">
-              <div><strong>${escapeHtml(row.agent_code || "-")}</strong></div>
-            </div>
-          </td>
-
+          <td data-label="代理">${escapeHtml(row.agent_code || "-")}</td>
           <td data-label="會員資料">
-            <div class="cell-list">
-              <div><strong>${escapeHtml(row.full_name || "")}</strong></div>
-              <div class="small">電話：${escapeHtml(row.phone || "")}</div>
-              <div class="small">LINE：${escapeHtml(row.line_id || "")}</div>
-              <div class="small">地址：${escapeHtml(row.current_address || "")}</div>
-              <div class="small">緊急聯絡人：${escapeHtml(row.emergency_contact || "")}</div>
-              <div class="small">關係：${escapeHtml(row.relationship || "")}</div>
-              <div class="small">緊急電話：${escapeHtml(row.emergency_phone || "")}</div>
-            </div>
+            <div><strong>${escapeHtml(row.full_name || "")}</strong></div>
+            <div class="small">電話：${escapeHtml(row.phone || "")}</div>
+            <div class="small">LINE：${escapeHtml(row.line_id || "")}</div>
+            <div class="small">地址：${escapeHtml(row.current_address || "")}</div>
+            <div class="small">緊急聯絡人：${escapeHtml(row.emergency_contact || "")}</div>
+            <div class="small">關係：${escapeHtml(row.relationship || "")}</div>
+            <div class="small">緊急電話：${escapeHtml(row.emergency_phone || "")}</div>
           </td>
-
           <td data-label="職務資料">
-            <div class="cell-list">
-              <div class="small">公司：${escapeHtml(row.company_name || "")}</div>
-              <div class="small">公司地址：${escapeHtml(row.company_address || "")}</div>
-              <div class="small">公司電話：${escapeHtml(row.company_phone || "")}</div>
-              <div class="small">薪資級距：${escapeHtml(row.monthly_salary_range || "")}</div>
-            </div>
+            <div class="small">公司：${escapeHtml(row.company_name || "")}</div>
+            <div class="small">公司地址：${escapeHtml(row.company_address || "")}</div>
+            <div class="small">公司電話：${escapeHtml(row.company_phone || "")}</div>
+            <div class="small">薪資級距：${escapeHtml(row.monthly_salary_range || "")}</div>
           </td>
-
-          <td data-label="審核狀態 / 備註">
-            <div class="status status-${escapeClass(row.review_status || "待審核")}">${escapeHtml(row.review_status || "待審核")}</div>
+          <td data-label="狀態 / 備註">
+            <div class="status ${(row.review_status || "待審核")}">${escapeHtml(row.review_status || "待審核")}</div>
             <textarea id="note-${row.id}" placeholder="版務備註">${escapeTextarea(row.reviewer_note || "")}</textarea>
           </td>
-
           <td data-label="操作">
-            <div class="action-grid">
+            <div class="actions">
               <select id="status-${row.id}">
                 <option value="待審核" ${(row.review_status || "待審核") === "待審核" ? "selected" : ""}>待審核</option>
                 <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
@@ -657,10 +389,6 @@
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
-    }
-
-    function escapeClass(str) {
-      return String(str ?? "").replaceAll(" ", "");
     }
 
     initApp();
