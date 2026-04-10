@@ -1,248 +1,442 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>天城娛樂城｜信用額度申請</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天城娛樂城｜版務審核後台</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      background: #0b1020;
+      color: #eef2ff;
+      padding: 24px;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    .wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial,"Microsoft JhengHei";
-  background:linear-gradient(135deg,#0b1020,#121a33);
-  color:#fff;
-}
+    .card {
+      background: #121a33;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
 
-.container{
-  max-width:720px;
-  margin:40px auto;
-  padding:20px;
-}
+    h1, h2 {
+      margin-top: 0;
+    }
 
-.card{
-  background:#1b2440;
-  border-radius:16px;
-  padding:24px;
-  box-shadow:0 10px 40px rgba(0,0,0,.5);
-}
+    input, select, textarea, button {
+      font-family: inherit;
+      font-size: 14px;
+    }
 
-h1{text-align:center;margin-bottom:10px;}
-.step{display:flex;margin-bottom:20px;}
-.step div{
-  flex:1;
-  padding:10px;
-  text-align:center;
-  border-radius:10px;
-  background:#2b3560;
-}
-.step .active{background:#6c63ff;}
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #0f1730;
+      color: #fff;
+      box-sizing: border-box;
+    }
 
-input,select{
-  width:100%;
-  padding:12px;
-  margin-top:6px;
-  margin-bottom:14px;
-  border-radius:8px;
-  border:none;
-  background:#0f1730;
-  color:#fff;
-}
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
 
-select option{
-  color:#000;
-}
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #6c63ff, #00c6ff);
+      color: #fff;
+      font-weight: 700;
+    }
 
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#6c63ff,#00c6ff);
-  color:#fff;
-  font-size:16px;
-  cursor:pointer;
-}
+    .btn-secondary {
+      background: #2a355e;
+    }
 
-.error{
-  color:#ff6b6b;
-  font-size:12px;
-  display:none;
-}
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 220px 220px 140px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
 
-.success{
-  text-align:center;
-}
-.big{
-  font-size:40px;
-  font-weight:bold;
-  color:#00e5a8;
-}
-.line-btn{
-  background:#00c300;
-  margin-top:20px;
-}
-</style>
+    .login-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 120px;
+      gap: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      color: #aab3d1;
+      font-weight: 600;
+      background: #121a33;
+      position: sticky;
+      top: 0;
+    }
+
+    .status {
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .待審核 { background: rgba(255, 193, 7, 0.18); color: #ffd76a; }
+    .已聯繫 { background: rgba(0, 198, 255, 0.18); color: #7be7ff; }
+    .通過 { background: rgba(0, 229, 168, 0.18); color: #7effd6; }
+    .拒絕 { background: rgba(255, 107, 107, 0.18); color: #ff9f9f; }
+
+    .actions {
+      display: grid;
+      gap: 8px;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #aab3d1;
+      line-height: 1.6;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: #aab3d1;
+    }
+
+    .login-msg {
+      margin-top: 12px;
+      color: #ffb3b3;
+      font-size: 13px;
+    }
+
+    .success-msg {
+      margin-top: 12px;
+      color: #7effd6;
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .toolbar,
+      .login-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 10px;
+      }
+
+      td {
+        border-bottom: none;
+        padding: 6px 0;
+      }
+
+      td::before {
+        content: attr(data-label);
+        display: block;
+        color: #aab3d1;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="card" id="loginCard">
+      <h1>版務審核後台登入</h1>
+      <p class="small">僅限 staff / admin 登入。代理專用頁面之後再獨立做。</p>
+      <div class="login-grid">
+        <input id="email" type="email" placeholder="登入 Email">
+        <input id="password" type="password" placeholder="登入密碼">
+        <button onclick="login()">登入</button>
+      </div>
+      <div id="loginMsg" class="login-msg"></div>
+    </div>
 
-<div class="container">
+    <div id="adminApp" class="hidden">
+      <div class="card">
+        <div class="topbar">
+          <div>
+            <h2 style="margin-bottom:6px;">信用申請審核後台</h2>
+            <div class="small" id="userInfo">未登入</div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="tag">admin / staff 可查看全部</span>
+            <button class="btn-secondary" onclick="logout()">登出</button>
+          </div>
+        </div>
 
-<h1>天城娛樂城帳號申請</h1>
+        <div class="toolbar">
+          <input id="searchKeyword" placeholder="搜尋姓名 / 電話 / LINE ID">
+          <select id="filterStatus">
+            <option value="">全部狀態</option>
+            <option value="待審核">待審核</option>
+            <option value="已聯繫">已聯繫</option>
+            <option value="通過">通過</option>
+            <option value="拒絕">拒絕</option>
+          </select>
+          <input id="filterAgent" placeholder="代理代碼，例如 A001">
+          <button onclick="loadData()">查詢</button>
+        </div>
 
-<div class="card">
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>建立時間</th>
+                <th>代理</th>
+                <th>會員資料</th>
+                <th>職務資料</th>
+                <th>狀態 / 備註</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="step">
-  <div id="s1" class="active">第1步 基本資料</div>
-  <div id="s2">第2步 額度評估</div>
-</div>
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://trhxabsjnzgfscxvsbiy.supabase.co",
+      "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
+    );
 
-<!-- STEP 1 -->
-<div id="step1">
+    let currentUser = null;
+    let currentRole = null;
 
-姓名*
-<input id="name">
+    async function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const msg = document.getElementById("loginMsg");
+      msg.textContent = "";
 
-手機號碼*
-<input id="phone">
-<div id="err-phone" class="error">手機格式錯誤（需09開頭10碼）</div>
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-LINE ID*
-<input id="line">
+      if (error) {
+        msg.textContent = "登入失敗：" + error.message;
+        return;
+      }
 
-現居地址*
-<input id="address">
+      await initApp();
+    }
 
-緊急聯絡人姓名*
-<input id="emergencyName">
+    async function logout() {
+      await supabase.auth.signOut();
+      document.getElementById("adminApp").classList.add("hidden");
+      document.getElementById("loginCard").classList.remove("hidden");
+      document.getElementById("loginMsg").textContent = "";
+    }
 
-關係*
-<input id="emergencyRelation">
+    async function initApp() {
+      const { data: authData } = await supabase.auth.getUser();
+      currentUser = authData.user;
 
-緊急聯絡人電話*
-<input id="emergencyPhone">
+      if (!currentUser) {
+        document.getElementById("adminApp").classList.add("hidden");
+        document.getElementById("loginCard").classList.remove("hidden");
+        return;
+      }
 
-<button onclick="next()">下一步</button>
+      const { data: roleRow, error: roleError } = await supabase
+        .from("user_roles")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .single();
 
-</div>
+      if (roleError || !roleRow || !["staff", "admin"].includes(roleRow.role)) {
+        alert("你沒有版務後台權限");
+        await supabase.auth.signOut();
+        document.getElementById("adminApp").classList.add("hidden");
+        document.getElementById("loginCard").classList.remove("hidden");
+        return;
+      }
 
-<!-- STEP 2 -->
-<div id="step2" style="display:none;">
+      currentRole = roleRow.role;
 
-公司名稱*
-<input id="companyName">
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("adminApp").classList.remove("hidden");
+      document.getElementById("userInfo").textContent =
+        `目前登入：${roleRow.display_name || currentUser.email}｜角色：${roleRow.role}`;
 
-公司地址（非必填）
-<input id="companyAddress">
+      await loadData();
+    }
 
-公司電話*
-<input id="companyPhone">
+    async function loadData() {
+      let query = supabase
+        .from("credit_applications")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-月薪*
-<select id="salary">
-<option value="">請選擇</option>
-<option>A.3萬以下</option>
-<option>B.3-5萬</option>
-<option>C.5-8萬</option>
-<option>D.8萬以上</option>
-</select>
+      const keyword = document.getElementById("searchKeyword").value.trim();
+      const status = document.getElementById("filterStatus").value;
+      const agent = document.getElementById("filterAgent").value.trim();
 
-<button onclick="submitForm()">送出申請</button>
+      if (status) {
+        query = query.eq("review_status", status);
+      }
 
-</div>
+      if (agent) {
+        query = query.eq("agent_code", agent);
+      }
 
-<!-- SUCCESS -->
-<div id="done" style="display:none;" class="success">
+      const { data, error } = await query;
 
-<h2>申請已送出</h2>
+      if (error) {
+        alert("讀取資料失敗：" + error.message);
+        return;
+      }
 
-<p>預估可申請額度</p>
-<div id="credit" class="big"></div>
+      let rows = data || [];
 
-<p>審核狀態：待審核</p>
+      if (keyword) {
+        rows = rows.filter(row => {
+          const searchText = [
+            row.full_name || "",
+            row.phone || "",
+            row.line_id || ""
+          ].join(" ").toLowerCase();
+          return searchText.includes(keyword.toLowerCase());
+        });
+      }
 
-<button class="line-btn" onclick="goLine()">👉 聯繫版務LINE</button>
+      const tbody = document.getElementById("tbody");
 
-</div>
+      tbody.innerHTML = rows.map(row => `
+        <tr>
+          <td data-label="建立時間">${formatTime(row.created_at)}</td>
+          <td data-label="代理">${escapeHtml(row.agent_code || "-")}</td>
+          <td data-label="會員資料">
+            <div><strong>${escapeHtml(row.full_name || "")}</strong></div>
+            <div class="small">電話：${escapeHtml(row.phone || "")}</div>
+            <div class="small">LINE：${escapeHtml(row.line_id || "")}</div>
+            <div class="small">地址：${escapeHtml(row.current_address || "")}</div>
+            <div class="small">緊急聯絡人：${escapeHtml(row.emergency_contact || "")}</div>
+            <div class="small">關係：${escapeHtml(row.relationship || "")}</div>
+            <div class="small">緊急電話：${escapeHtml(row.emergency_phone || "")}</div>
+          </td>
+          <td data-label="職務資料">
+            <div class="small">公司：${escapeHtml(row.company_name || "")}</div>
+            <div class="small">公司地址：${escapeHtml(row.company_address || "")}</div>
+            <div class="small">公司電話：${escapeHtml(row.company_phone || "")}</div>
+            <div class="small">薪資級距：${escapeHtml(row.monthly_salary_range || "")}</div>
+          </td>
+          <td data-label="狀態 / 備註">
+            <div class="status ${row.review_status || "待審核"}">${row.review_status || "待審核"}</div>
+            <textarea id="note-${row.id}" placeholder="版務備註" style="margin-top:10px;">${escapeHtml(row.reviewer_note || "")}</textarea>
+          </td>
+          <td data-label="操作">
+            <div class="actions">
+              <select id="status-${row.id}">
+                <option value="待審核" ${row.review_status === "待審核" ? "selected" : ""}>待審核</option>
+                <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
+                <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
+                <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
+              </select>
+              <button onclick="saveRow(${row.id})">儲存</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
 
-</div>
-</div>
+    async function saveRow(id) {
+      const status = document.getElementById(`status-${id}`).value;
+      const note = document.getElementById(`note-${id}`).value.trim();
 
-<script>
+      const { error } = await supabase
+        .from("credit_applications")
+        .update({
+          review_status: status,
+          reviewer_note: note,
+          reviewer_user_id: currentUser.id
+        })
+        .eq("id", id);
 
-const supabase = window.supabase.createClient(
-  "https://trhxabsjnzgfscxvsbiy.supabase.co",
-  "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
-);
+      if (error) {
+        alert("更新失敗：" + error.message);
+        return;
+      }
 
-function isPhone(v){
-  return /^09\d{8}$/.test(v);
-}
+      alert("已更新");
+      await loadData();
+    }
 
-function next(){
-  const phone=document.getElementById("phone").value.trim();
+    function formatTime(v) {
+      if (!v) return "-";
+      try {
+        return new Date(v).toLocaleString("zh-TW");
+      } catch {
+        return v;
+      }
+    }
 
-  if(!isPhone(phone)){
-    document.getElementById("err-phone").style.display="block";
-    return;
-  }
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-  document.getElementById("step1").style.display="none";
-  document.getElementById("step2").style.display="block";
-  document.getElementById("s1").classList.remove("active");
-  document.getElementById("s2").classList.add("active");
-}
-
-function getCredit(s){
-  const map={
-    "A.3萬以下":"5,000",
-    "B.3-5萬":"5,000",
-    "C.5-8萬":"6,000",
-    "D.8萬以上":"6,000"
-  };
-  return map[s]||"-";
-}
-
-async function submitForm(){
-
-  const data={
-    name:val("name"),
-    phone:val("phone"),
-    line:val("line"),
-    address:val("address"),
-    emergency_name:val("emergencyName"),
-    emergency_relation:val("emergencyRelation"),
-    emergency_phone:val("emergencyPhone"),
-    company_name:val("companyName"),
-    company_address:val("companyAddress"),
-    company_phone:val("companyPhone"),
-    salary:val("salary")
-  };
-
-  const {error}=await supabase.from("credit_applications").insert([data]);
-
-  if(error){
-    alert("送出失敗");
-    return;
-  }
-
-  document.getElementById("step2").style.display="none";
-  document.getElementById("done").style.display="block";
-
-  document.getElementById("credit").innerText=getCredit(data.salary);
-}
-
-function val(id){
-  return document.getElementById(id).value.trim();
-}
-
-function goLine(){
-  window.location.href="https://line.me/ti/p/rVBnRpG5SY";
-}
-
-</script>
-
+    initApp();
+  </script>
 </body>
 </html>
