@@ -278,16 +278,6 @@
         width: 100%;
       }
     }
-select {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-select option {
-  color: #000000;
-  background-color: #ffffff;
-}
-  }
   </style>
 </head>
 <body>
@@ -569,15 +559,16 @@ select option {
           return;
         }
 
-        setMessage("success", "送出成功，資料已進入審核。請留意後續通知。");
-
-        [
-          "name", "phone", "lineId", "address", "emergencyName", "emergencyRelation", "emergencyPhone",
-          "companyName", "companyAddress", "companyPhone"
-        ].forEach(id => document.getElementById(id).value = "");
-        document.getElementById("salaryRange").value = "";
-
-        backStep1();
+        // 成功後顯示轉換頁
+        document.querySelector('.panel').innerHTML = `
+          <div style="padding:40px;text-align:center">
+            <h2 style="font-size:26px;margin-bottom:10px">申請已送出 ✅</h2>
+            <p style="color:#aab3d1;margin-bottom:20px">您的資料已進入審核流程，請留意後續通知。</p>
+            <div style="margin-top:20px">
+              <a href="https://line.me/ti/p/rVBnRpG5SY" target="_blank" style="display:inline-block;padding:12px 20px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#5eead4);color:#fff;text-decoration:none;font-weight:bold">加入LINE版務審核</a>
+            </div>
+          </div>
+        `;
       } catch (err) {
         console.error(err);
         setMessage("error", "程式錯誤：" + err.message);
