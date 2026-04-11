@@ -288,21 +288,23 @@
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      setLoginMsg("");
+      console.log("開始登入");
 
-      if (!email || !password) {
-        setLoginMsg("請輸入 Email 與密碼");
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+        console.log("登入結果", data, error);
+
+        if (error) {
+        alert("登入失敗：" + error.message);
         return;
-      }
+     }
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+        alert("登入成功");
 
-      if (error) {
-        setLoginMsg("登入失敗：" + error.message);
-        return;
-      }
-
-      await initApp();
+        window.location.href = "dashboard.html";
     }
 
     async function initApp() {
