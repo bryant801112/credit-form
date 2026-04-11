@@ -3,222 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>版務審核後台</title>
+  <title>後台登入測試</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       margin: 0;
       font-family: Arial, "Microsoft JhengHei", sans-serif;
-      background: linear-gradient(135deg, #081225, #0c1d3a);
+      background: #081225;
       color: #fff;
+      padding: 40px 20px;
     }
-    .wrap {
-      max-width: 1200px;
+    .box {
+      max-width: 760px;
       margin: 0 auto;
-      padding: 32px 20px;
-    }
-    .card {
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
       padding: 24px;
-      backdrop-filter: blur(8px);
-      margin-bottom: 20px;
     }
-    h1, h2, h3 {
-      margin-top: 0;
-    }
-    .small {
-      font-size: 12px;
-      color: #b9c3e6;
-      line-height: 1.7;
-    }
-    .hidden {
-      display: none !important;
-    }
-    .login-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 120px;
-      gap: 12px;
-      margin-top: 14px;
-    }
-    input, select, textarea, button {
-      font-family: inherit;
-      font-size: 14px;
+    input, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-bottom: 12px;
       border-radius: 10px;
       border: none;
       outline: none;
-      box-sizing: border-box;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      background: #f2f4f8;
-      color: #111;
-    }
-    textarea {
-      min-height: 72px;
-      resize: vertical;
+      font-size: 16px;
     }
     button {
-      padding: 12px 14px;
-      color: #fff;
       cursor: pointer;
-      background: linear-gradient(90deg, #7c5cff, #00d4ff);
-      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(90deg,#7c5cff,#00d4ff);
+      font-weight: bold;
     }
-    .btn-secondary {
-      background: #43507a;
-    }
-    .msg {
-      margin-top: 12px;
-      color: #ff9090;
-      font-size: 13px;
+    #msg {
       white-space: pre-line;
+      color: #ff9f9f;
+      margin-top: 10px;
+      font-size: 14px;
     }
-    .ok {
+    #ok {
       color: #7effd6;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1fr 180px 180px 120px;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .tag {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      color: #c3cff3;
-      font-size: 12px;
-    }
-    .table-wrap {
-      overflow: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      text-align: left;
-      vertical-align: top;
-      font-size: 13px;
-    }
-    th {
-      color: #b9c3e6;
-      font-weight: 600;
-    }
-    .badge {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-block;
-    }
-    .pending { background: #ffaa00; color: #111; }
-    .contacted { background: #00b8d4; color: #fff; }
-    .approved { background: #00c853; color: #fff; }
-    .rejected { background: #ff5252; color: #fff; }
-
-    @media (max-width: 980px) {
-      .login-grid, .toolbar {
-        grid-template-columns: 1fr;
-      }
-      table, thead, tbody, tr, td, th {
-        display: block;
-      }
-      thead {
-        display: none;
-      }
-      tr {
-        margin-bottom: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 12px;
-        padding: 10px;
-      }
-      td {
-        border-bottom: none;
-      }
-      td::before {
-        content: attr(data-label);
-        display: block;
-        color: #b9c3e6;
-        font-size: 12px;
-        margin-bottom: 4px;
-      }
+      white-space: pre-line;
+      margin-top: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card" id="loginCard">
-      <h2>版務審核後台登入</h2>
-      <div class="small">僅限 admin / staff / agent 帳號登入。</div>
-
-      <div class="login-grid">
-        <input id="email" type="email" placeholder="Email">
-        <input id="password" type="password" placeholder="密碼">
-        <button onclick="login()">登入</button>
-      </div>
-
-      <div id="loginMsg" class="msg"></div>
-    </div>
-
-    <div id="appCard" class="card hidden">
-      <div class="topbar">
-        <div>
-          <h3 style="margin-bottom:6px;">後台資料列表</h3>
-          <div id="userInfo" class="small"></div>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <span class="tag" id="roleTag">未登入</span>
-          <button class="btn-secondary" onclick="logout()">登出</button>
-        </div>
-      </div>
-
-      <div class="toolbar">
-        <input id="searchKeyword" placeholder="搜尋姓名 / 電話 / LINE / 代理">
-        <select id="filterStatus">
-          <option value="">全部狀態</option>
-          <option value="待審核">待審核</option>
-          <option value="已聯繫">已聯繫</option>
-          <option value="通過">通過</option>
-          <option value="拒絕">拒絕</option>
-        </select>
-        <input id="filterAgent" placeholder="代理代碼，例如 A001">
-        <button onclick="loadData()">查詢</button>
-      </div>
-
-      <div id="appMsg" class="msg ok"></div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>姓名</th>
-              <th>電話</th>
-              <th>LINE</th>
-              <th>代理</th>
-              <th>狀態</th>
-              <th>備註</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="dataBody"></tbody>
-        </table>
-      </div>
-    </div>
+  <div class="box">
+    <h2>Supabase 登入測試</h2>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="密碼">
+    <button onclick="login()">登入</button>
+    <div id="msg"></div>
+    <div id="ok"></div>
   </div>
 
   <script>
@@ -227,233 +67,58 @@
       "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
     );
 
-    let currentUser = null;
-    let currentRole = null;
-    let currentAgentCode = null;
-
-    function setLoginMsg(text, ok = false) {
-      const el = document.getElementById("loginMsg");
-      el.textContent = text || "";
-      el.className = ok ? "msg ok" : "msg";
-    }
-
-    function setAppMsg(text, ok = true) {
-      const el = document.getElementById("appMsg");
-      el.textContent = text || "";
-      el.className = ok ? "msg ok" : "msg";
-    }
-
     async function login() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
+      const msg = document.getElementById("msg");
+      const ok = document.getElementById("ok");
 
-      setLoginMsg("");
+      msg.textContent = "";
+      ok.textContent = "";
 
       if (!email || !password) {
-        setLoginMsg("請先輸入 Email 與密碼");
+        msg.textContent = "請輸入 Email 與密碼";
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
       if (error) {
-        console.error("登入失敗：", error);
-        setLoginMsg("登入失敗：" + error.message);
+        msg.textContent = "登入失敗：\n" + error.message;
+        console.error(error);
         return;
       }
 
-      setLoginMsg("登入成功，讀取角色中…", true);
-      await initApp();
-    }
-
-    async function initApp() {
       const { data: userData, error: userError } = await supabase.auth.getUser();
 
       if (userError) {
-        console.error("取得使用者失敗：", userError);
-        setLoginMsg("取得使用者失敗：" + userError.message);
+        msg.textContent = "登入成功，但讀取使用者失敗：\n" + userError.message;
         return;
       }
 
-      currentUser = userData.user;
-
-      if (!currentUser) {
-        setLoginMsg("目前沒有登入中的使用者");
-        return;
-      }
+      const user = userData.user;
 
       const { data: roleData, error: roleError } = await supabase
         .from("user_roles")
         .select("*")
-        .eq("user_id", currentUser.id)
+        .eq("user_id", user.id)
         .single();
 
       if (roleError) {
-        console.error("讀取角色失敗：", roleError);
-        setLoginMsg("讀取角色失敗：" + roleError.message);
+        msg.textContent = "登入成功，但讀取角色失敗：\n" + roleError.message;
+        console.error(roleError);
         return;
       }
 
-      if (!roleData) {
-        setLoginMsg("查無角色資料，請確認 user_roles 是否有綁定這個帳號");
-        return;
-      }
-
-      currentRole = roleData.role;
-      currentAgentCode = roleData.agent_code || null;
-
-      if (!["admin", "staff", "agent"].includes(currentRole)) {
-        setLoginMsg("此帳號沒有後台權限");
-        return;
-      }
-
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("appCard").classList.remove("hidden");
-      document.getElementById("userInfo").textContent =
-        `${currentUser.email}｜角色：${currentRole}${currentAgentCode ? "｜代理：" + currentAgentCode : ""}`;
-      document.getElementById("roleTag").textContent =
-        currentRole === "agent" ? `代理 ${currentAgentCode}` : `版務 ${currentRole}`;
-
-      await loadData();
+      ok.textContent =
+        "登入成功\\n" +
+        "Email: " + user.email + "\\n" +
+        "角色: " + roleData.role + "\\n" +
+        "代理碼: " + (roleData.agent_code || "-");
     }
-
-    async function loadData() {
-      setAppMsg("");
-
-      let query = supabase
-        .from("credit_applications")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (currentRole === "agent") {
-        query = query.eq("agent_code", currentAgentCode);
-      }
-
-      const status = document.getElementById("filterStatus").value;
-      const filterAgent = document.getElementById("filterAgent").value.trim();
-      const keyword = document.getElementById("searchKeyword").value.trim().toLowerCase();
-
-      if (status) query = query.eq("review_status", status);
-      if (filterAgent && currentRole !== "agent") query = query.eq("agent_code", filterAgent);
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("讀取申請資料失敗：", error);
-        setAppMsg("讀取資料失敗：" + error.message, false);
-        return;
-      }
-
-      let rows = data || [];
-
-      if (keyword) {
-        rows = rows.filter(row => {
-          const text = [
-            row.full_name || "",
-            row.phone || "",
-            row.line_id || "",
-            row.agent_code || ""
-          ].join(" ").toLowerCase();
-          return text.includes(keyword);
-        });
-      }
-
-      const tbody = document.getElementById("dataBody");
-      tbody.innerHTML = "";
-
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="7">目前沒有資料</td></tr>`;
-        return;
-      }
-
-      rows.forEach(row => {
-        const badgeClass = getBadgeClass(row.review_status);
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td data-label="姓名">${escapeHtml(row.full_name || "")}</td>
-          <td data-label="電話">${escapeHtml(row.phone || "")}</td>
-          <td data-label="LINE">${escapeHtml(row.line_id || "")}</td>
-          <td data-label="代理">${escapeHtml(row.agent_code || "-")}</td>
-          <td data-label="狀態"><span class="badge ${badgeClass}">${escapeHtml(row.review_status || "待審核")}</span></td>
-          <td data-label="備註">
-            <textarea id="note-${row.id}" ${currentRole === "agent" ? "disabled" : ""}>${escapeText(row.reviewer_note || "")}</textarea>
-          </td>
-          <td data-label="操作">
-            ${
-              currentRole === "agent"
-                ? "-"
-                : `
-                  <select id="status-${row.id}">
-                    <option value="待審核" ${(row.review_status || "待審核") === "待審核" ? "selected" : ""}>待審核</option>
-                    <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
-                    <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
-                    <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
-                  </select>
-                  <div style="margin-top:8px;">
-                    <button onclick="saveRow('${row.id}')">儲存</button>
-                  </div>
-                `
-            }
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function getBadgeClass(status) {
-      const s = status || "待審核";
-      if (s === "通過") return "approved";
-      if (s === "拒絕") return "rejected";
-      if (s === "已聯繫") return "contacted";
-      return "pending";
-    }
-
-    async function saveRow(id) {
-      const status = document.getElementById(`status-${id}`).value;
-      const note = document.getElementById(`note-${id}`).value.trim();
-
-      const { error } = await supabase
-        .from("credit_applications")
-        .update({
-          review_status: status,
-          reviewer_note: note,
-          reviewer_user_id: currentUser.id
-        })
-        .eq("id", id);
-
-      if (error) {
-        console.error("更新失敗：", error);
-        setAppMsg("更新失敗：" + error.message, false);
-        return;
-      }
-
-      setAppMsg("已更新");
-      await loadData();
-    }
-
-    async function logout() {
-      await supabase.auth.signOut();
-      location.reload();
-    }
-
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function escapeText(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-    }
-
-    initApp();
   </script>
 </body>
 </html>
