@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天城娛樂/卓越團隊/帳號開通申請</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>天城娛樂城帳號開通申請</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
     :root{
       --bg:#081225;
       --card:#101a35;
-      --card2:#152248;
       --line:rgba(255,255,255,.08);
       --text:#eef2ff;
       --muted:#aab3d1;
@@ -30,24 +29,10 @@
       min-height:100vh;
       padding:32px 16px;
     }
-    .wrap{
-      max-width:760px;
-      margin:0 auto;
-    }
-    .hero{
-      text-align:center;
-      margin-bottom:20px;
-    }
-    .hero h1{
-      margin:0 0 10px;
-      font-size:38px;
-      line-height:1.2;
-    }
-    .hero p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.8;
-    }
+    .wrap{max-width:760px;margin:0 auto}
+    .hero{text-align:center;margin-bottom:20px}
+    .hero h1{margin:0 0 10px;font-size:38px;line-height:1.2}
+    .hero p{margin:0;color:var(--muted);line-height:1.8}
     .badge{
       display:inline-block;
       margin-bottom:16px;
@@ -58,6 +43,7 @@
       color:#dbe4ff;
       font-size:12px;
     }
+    .agent-tag{margin-top:10px;color:#cfe4ff;font-size:13px}
     .card{
       background:rgba(16,26,53,.9);
       border:1px solid var(--line);
@@ -69,10 +55,7 @@
       padding:22px 24px 14px;
       border-bottom:1px solid var(--line);
     }
-    .card-head h2{
-      margin:0 0 12px;
-      font-size:24px;
-    }
+    .card-head h2{margin:0 0 12px;font-size:24px}
     .steps{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -93,21 +76,14 @@
       box-shadow:0 0 0 2px rgba(124,92,255,.12) inset;
       background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(0,212,255,.12));
     }
-    .body{
-      padding:24px;
-    }
-    .section-title{
-      margin:0 0 18px;
-      font-size:26px;
-    }
+    .body{padding:24px}
+    .section-title{margin:0 0 18px;font-size:26px}
     .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:16px;
     }
-    .full{
-      grid-column:1 / -1;
-    }
+    .full{grid-column:1 / -1}
     label{
       display:block;
       margin-bottom:7px;
@@ -116,7 +92,7 @@
       font-weight:700;
     }
     .req{color:#ff9f9f}
-    input, select, textarea{
+    input, select{
       width:100%;
       padding:13px 14px;
       border-radius:14px;
@@ -126,13 +102,8 @@
       outline:none;
       font-size:15px;
     }
-    input::placeholder, textarea::placeholder{
-      color:#95a1c8;
-    }
-    select option{
-      color:#111;
-      background:#fff;
-    }
+    input::placeholder{color:#95a1c8}
+    select option{color:#111;background:#fff}
     .hint{
       margin-top:6px;
       color:var(--muted);
@@ -160,11 +131,6 @@
       border:1px solid rgba(255,82,82,.25);
       color:#ffb3b3;
     }
-    .msg.success-box{
-      background:rgba(0,200,83,.12);
-      border:1px solid rgba(0,200,83,.25);
-      color:#b8ffdb;
-    }
     .actions{
       display:flex;
       gap:12px;
@@ -182,24 +148,15 @@
       color:#fff;
       background:linear-gradient(90deg,var(--primary),var(--primary2));
     }
-    .btn-secondary{
-      background:#37456f;
-    }
+    .btn-secondary{background:#37456f}
     .success-view{
       display:none;
       text-align:center;
       padding:24px 24px 30px;
     }
     .success-view.show{display:block}
-    .success-view h3{
-      font-size:34px;
-      margin:10px 0;
-    }
-    .success-view p{
-      color:var(--muted);
-      line-height:1.8;
-      margin:0 0 18px;
-    }
+    .success-view h3{font-size:34px;margin:10px 0}
+    .success-view p{color:var(--muted);line-height:1.8;margin:0 0 18px}
     .result-box{
       background:rgba(255,255,255,.04);
       border:1px solid var(--line);
@@ -219,29 +176,21 @@
       border-radius:14px;
       padding:14px;
     }
-    .result-label{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:6px;
+    .result-label{color:var(--muted);font-size:12px;margin-bottom:6px}
+    .result-value{font-size:18px;font-weight:800}
+    .copy-box{
+      margin-top:16px;
+      background:rgba(255,255,255,.04);
+      border:1px dashed rgba(255,255,255,.14);
+      border-radius:14px;
+      padding:14px;
+      line-height:1.8;
+      color:#dbe4ff;
     }
-    .result-value{
-      font-size:18px;
-      font-weight:800;
-    }
-    .tiny{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.7;
-    }
-    .agent-tag{
-      margin-top:10px;
-      color:#cfe4ff;
-      font-size:13px;
-    }
-    @media (max-width: 760px){
+    .tiny{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.7}
+    @media (max-width:760px){
       .hero h1{font-size:30px}
-      .grid, .result-grid{grid-template-columns:1fr}
+      .grid,.result-grid{grid-template-columns:1fr}
       .body{padding:18px}
       .card-head{padding:18px 18px 14px}
       .actions{justify-content:stretch}
@@ -269,7 +218,6 @@
 
       <div class="body" id="step1">
         <h3 class="section-title">基本資料</h3>
-
         <div class="grid">
           <div>
             <label>姓名 <span class="req">*</span></label>
@@ -311,7 +259,7 @@
 
           <div>
             <label>緊急聯絡人關係 <span class="req">*</span></label>
-            <input id="relationship" placeholder="需直系親屬，例如：配偶、父母、兄弟姊妹">
+            <input id="relationship" placeholder="例如：配偶、父母、兄弟姊妹">
             <div id="err-relationship" class="error"></div>
           </div>
 
@@ -331,7 +279,6 @@
 
       <div class="body" id="step2" style="display:none;">
         <h3 class="section-title">職務信用額度評估資訊</h3>
-
         <div class="grid">
           <div>
             <label>任職公司全稱 <span class="req">*</span></label>
@@ -389,6 +336,14 @@
             <div class="result-value">待審核</div>
           </div>
         </div>
+
+        <div class="copy-box">
+          請複製以下資訊傳給版務：<br><br>
+          姓名：<span id="copyName"></span><br>
+          手機：<span id="copyPhone"></span><br>
+          身分證：<span id="copyId"></span>
+        </div>
+
         <div class="tiny">
           實際核准額度仍以人工審核結果為準。建議你立即聯繫版務，提供申請姓名與手機，以加快處理流程。
         </div>
@@ -408,7 +363,7 @@
     );
 
     const LINE_URL = "https://line.me/ti/p/rVBnRpG5SY";
-    const AGENTS = ["A001", "A002", "A003", "A004"];
+    const AGENTS = ["A001", "A002", "A003"];
 
     function getAgentCode() {
       const params = new URLSearchParams(window.location.search);
@@ -416,13 +371,8 @@
       return AGENTS.includes(value) ? value : null;
     }
 
-    function getAgentLabel(code) {
-      if (!code) return "官方直客";
-      return code;
-    }
-
     const currentAgentCode = getAgentCode();
-    document.getElementById("agentTag").textContent = `目前通路：${getAgentLabel(currentAgentCode)}`;
+    document.getElementById("agentTag").textContent = `目前通路：${currentAgentCode || "官方直客"}`;
 
     function setError(id, text) {
       const el = document.getElementById(`err-${id}`);
@@ -441,10 +391,10 @@
       hideMessage("step2Msg");
     }
 
-    function showMessage(id, text, isSuccess = false) {
+    function showMessage(id, text) {
       const el = document.getElementById(id);
       el.textContent = text;
-      el.className = `msg show ${isSuccess ? "success-box" : "error-box"}`;
+      el.className = "msg show error-box";
     }
 
     function hideMessage(id) {
@@ -456,7 +406,6 @@
     function goStep2() {
       clearErrors();
       if (!validateStep1()) return;
-
       document.getElementById("step1").style.display = "none";
       document.getElementById("step2").style.display = "block";
       document.getElementById("pill1").classList.remove("active");
@@ -495,11 +444,9 @@
 
       let sum = Math.floor(code / 10) + (code % 10) * 9;
       const weights = [8,7,6,5,4,3,2,1,1];
-
       for (let i = 1; i <= 9; i++) {
         sum += parseInt(id[i], 10) * weights[i - 1];
       }
-
       return sum % 10 === 0;
     }
 
@@ -515,7 +462,6 @@
 
     function validateStep1() {
       let ok = true;
-
       const full_name = document.getElementById("full_name").value.trim();
       const phone = document.getElementById("phone").value.trim();
       const national_id = normalizeNationalId(document.getElementById("national_id").value);
@@ -525,81 +471,32 @@
       const relationship = document.getElementById("relationship").value.trim();
       const emergency_phone = document.getElementById("emergency_phone").value.trim();
 
-      if (!full_name) {
-        setError("full_name", "請輸入姓名");
-        ok = false;
-      }
+      if (!full_name) { setError("full_name", "請輸入姓名"); ok = false; }
+      if (!isTaiwanMobile(phone)) { setError("phone", "手機號碼格式錯誤，需為 09 開頭共 10 碼"); ok = false; }
+      if (!isTaiwanNationalId(national_id)) { setError("national_id", "身分證字號格式錯誤"); ok = false; }
+      if (!line_id) { setError("line_id", "請輸入 LINE ID"); ok = false; }
+      if (!current_address) { setError("current_address", "請輸入現居地址"); ok = false; }
+      if (!emergency_contact) { setError("emergency_contact", "請輸入緊急聯絡人姓名"); ok = false; }
+      if (!relationship) { setError("relationship", "請輸入緊急聯絡人關係"); ok = false; }
+      if (!emergency_phone) { setError("emergency_phone", "請輸入緊急聯絡人電話"); ok = false; }
 
-      if (!isTaiwanMobile(phone)) {
-        setError("phone", "手機號碼格式錯誤，需為 09 開頭共 10 碼");
-        ok = false;
-      }
-
-      if (!isTaiwanNationalId(national_id)) {
-        setError("national_id", "身分證字號格式錯誤");
-        ok = false;
-      }
-
-      if (!line_id) {
-        setError("line_id", "請輸入 LINE ID");
-        ok = false;
-      }
-
-      if (!current_address) {
-        setError("current_address", "請輸入現居地址");
-        ok = false;
-      }
-
-      if (!emergency_contact) {
-        setError("emergency_contact", "請輸入緊急聯絡人姓名");
-        ok = false;
-      }
-
-      if (!relationship) {
-        setError("relationship", "請輸入緊急聯絡人關係");
-        ok = false;
-      }
-
-      if (!emergency_phone) {
-        setError("emergency_phone", "請輸入緊急聯絡人電話");
-        ok = false;
-      }
-
-      if (!ok) {
-        showMessage("step1Msg", "請先完整填寫第 1 頁資料。");
-      }
+      if (!ok) showMessage("step1Msg", "請先完整填寫第 1 頁資料。");
 
       document.getElementById("national_id").value = national_id;
-
       return ok;
     }
 
     function validateStep2() {
       let ok = true;
-
       const company_name = document.getElementById("company_name").value.trim();
       const company_phone = document.getElementById("company_phone").value.trim();
       const monthly_salary_range = document.getElementById("monthly_salary_range").value;
 
-      if (!company_name) {
-        setError("company_name", "請輸入任職公司全稱");
-        ok = false;
-      }
+      if (!company_name) { setError("company_name", "請輸入任職公司全稱"); ok = false; }
+      if (!company_phone) { setError("company_phone", "請輸入公司電話"); ok = false; }
+      if (!monthly_salary_range) { setError("monthly_salary_range", "請選擇月薪級距"); ok = false; }
 
-      if (!company_phone) {
-        setError("company_phone", "請輸入公司電話");
-        ok = false;
-      }
-
-      if (!monthly_salary_range) {
-        setError("monthly_salary_range", "請選擇月薪級距");
-        ok = false;
-      }
-
-      if (!ok) {
-        showMessage("step2Msg", "請先完整填寫第 2 頁資料。");
-      }
-
+      if (!ok) showMessage("step2Msg", "請先完整填寫第 2 頁資料。");
       return ok;
     }
 
@@ -628,7 +525,6 @@
       const emergency_contact = document.getElementById("emergency_contact").value.trim();
       const relationship = document.getElementById("relationship").value.trim();
       const emergency_phone = document.getElementById("emergency_phone").value.trim();
-
       const company_name = document.getElementById("company_name").value.trim();
       const company_phone = document.getElementById("company_phone").value.trim();
       const company_address = document.getElementById("company_address").value.trim();
@@ -671,6 +567,10 @@
         }
 
         document.getElementById("resultCredit").textContent = estimated_credit.toLocaleString();
+        document.getElementById("copyName").textContent = full_name;
+        document.getElementById("copyPhone").textContent = phone;
+        document.getElementById("copyId").textContent = national_id;
+
         document.getElementById("formCard").style.display = "none";
         document.getElementById("successView").classList.add("show");
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -682,10 +582,8 @@
       }
     }
 
-      function openLine() {
-       window.open(LINE_URL, "_blank");
-    }
-}
+    function openLine() {
+      window.open("https://line.me/ti/p/rVBnRpG5SY", "_blank");
     }
 
     function resetForm() {
