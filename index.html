@@ -3,251 +3,400 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天城娛樂城｜版務審核後台</title>
+  <title>天城娛樂城帳號開通申請</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, "Microsoft JhengHei", sans-serif;
-      background: #0b1020;
-      color: #eef2ff;
-      padding: 24px;
+    :root{
+      --bg:#081225;
+      --card:#101a35;
+      --card2:#152248;
+      --line:rgba(255,255,255,.08);
+      --text:#eef2ff;
+      --muted:#aab3d1;
+      --primary:#7c5cff;
+      --primary2:#00d4ff;
+      --danger:#ff8e8e;
+      --success:#7effd6;
     }
-
-    .wrap {
-      max-width: 1320px;
-      margin: 0 auto;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,"Microsoft JhengHei",sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124,92,255,.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(0,212,255,.18), transparent 24%),
+        linear-gradient(180deg,#07122c 0%, #081225 100%);
+      color:var(--text);
+      min-height:100vh;
+      padding:32px 16px;
     }
-
-    .card {
-      background: #121a33;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    .wrap{
+      max-width:760px;
+      margin:0 auto;
     }
-
-    h1, h2 {
-      margin-top: 0;
+    .hero{
+      text-align:center;
+      margin-bottom:20px;
     }
-
-    input, select, textarea, button {
-      font-family: inherit;
-      font-size: 14px;
+    .hero h1{
+      margin:0 0 10px;
+      font-size:38px;
+      line-height:1.2;
     }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: #0f1730;
-      color: #fff;
-      box-sizing: border-box;
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.8;
     }
-
-    textarea {
-      resize: vertical;
-      min-height: 70px;
+    .badge{
+      display:inline-block;
+      margin-bottom:16px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      color:#dbe4ff;
+      font-size:12px;
     }
-
-    button {
-      padding: 10px 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #6c63ff, #00c6ff);
-      color: #fff;
-      font-weight: 700;
+    .card{
+      background:rgba(16,26,53,.9);
+      border:1px solid var(--line);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
     }
-
-    .btn-secondary {
-      background: #2a355e;
+    .card-head{
+      padding:22px 24px 14px;
+      border-bottom:1px solid var(--line);
     }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1fr 220px 220px 140px;
-      gap: 12px;
-      margin-bottom: 16px;
+    .card-head h2{
+      margin:0 0 12px;
+      font-size:24px;
     }
-
-    .login-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 120px;
-      gap: 12px;
+    .steps{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
+    .step-pill{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-weight:700;
+      text-align:center;
     }
-
-    th, td {
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 12px 10px;
-      text-align: left;
-      vertical-align: top;
-      font-size: 13px;
+    .step-pill.active{
+      color:#fff;
+      border-color:rgba(124,92,255,.55);
+      box-shadow:0 0 0 2px rgba(124,92,255,.12) inset;
+      background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(0,212,255,.12));
     }
-
-    th {
-      color: #aab3d1;
-      font-weight: 600;
-      background: #121a33;
-      position: sticky;
-      top: 0;
+    .body{
+      padding:24px;
     }
-
-    .status {
-      padding: 4px 10px;
-      border-radius: 999px;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
+    .section-title{
+      margin:0 0 18px;
+      font-size:26px;
     }
-
-    .待審核 { background: rgba(255, 193, 7, 0.18); color: #ffd76a; }
-    .已聯繫 { background: rgba(0, 198, 255, 0.18); color: #7be7ff; }
-    .通過 { background: rgba(0, 229, 168, 0.18); color: #7effd6; }
-    .拒絕 { background: rgba(255, 107, 107, 0.18); color: #ff9f9f; }
-
-    .actions {
-      display: grid;
-      gap: 8px;
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
     }
-
-    .small {
-      font-size: 12px;
-      color: #aab3d1;
-      line-height: 1.6;
+    .full{
+      grid-column:1 / -1;
     }
-
-    .hidden {
-      display: none;
+    label{
+      display:block;
+      margin-bottom:7px;
+      color:#dce5ff;
+      font-size:14px;
+      font-weight:700;
     }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      gap: 12px;
-      flex-wrap: wrap;
+    .req{color:#ff9f9f}
+    input, select, textarea{
+      width:100%;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#192546;
+      color:#fff;
+      outline:none;
+      font-size:15px;
     }
-
-    .tag {
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      font-size: 12px;
-      color: #aab3d1;
+    input::placeholder, textarea::placeholder{
+      color:#95a1c8;
     }
-
-    .login-msg {
-      margin-top: 12px;
-      color: #ffb3b3;
-      font-size: 13px;
+    select option{
+      color:#111;
+      background:#fff;
     }
-
-    .success-msg {
-      margin-top: 12px;
-      color: #7effd6;
-      font-size: 13px;
+    .hint{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
     }
-
-    @media (max-width: 980px) {
-      .toolbar,
-      .login-grid {
-        grid-template-columns: 1fr;
-      }
-
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      tr {
-        margin-bottom: 18px;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 14px;
-        padding: 10px;
-      }
-
-      td {
-        border-bottom: none;
-        padding: 6px 0;
-      }
-
-      td::before {
-        content: attr(data-label);
-        display: block;
-        color: #aab3d1;
-        font-size: 12px;
-        margin-bottom: 4px;
-      }
+    .error{
+      margin-top:6px;
+      color:var(--danger);
+      font-size:13px;
+      display:none;
+    }
+    .error.show{display:block}
+    .msg{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:14px;
+      font-size:14px;
+      line-height:1.7;
+      display:none;
+    }
+    .msg.show{display:block}
+    .msg.error-box{
+      background:rgba(255,82,82,.12);
+      border:1px solid rgba(255,82,82,.25);
+      color:#ffb3b3;
+    }
+    .msg.success-box{
+      background:rgba(0,200,83,.12);
+      border:1px solid rgba(0,200,83,.25);
+      color:#b8ffdb;
+    }
+    .actions{
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+      margin-top:22px;
+      flex-wrap:wrap;
+    }
+    button{
+      border:none;
+      border-radius:14px;
+      padding:13px 22px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+      color:#fff;
+      background:linear-gradient(90deg,var(--primary),var(--primary2));
+    }
+    .btn-secondary{
+      background:#37456f;
+    }
+    .success-view{
+      display:none;
+      text-align:center;
+      padding:24px 24px 30px;
+    }
+    .success-view.show{display:block}
+    .success-view h3{
+      font-size:34px;
+      margin:10px 0;
+    }
+    .success-view p{
+      color:var(--muted);
+      line-height:1.8;
+      margin:0 0 18px;
+    }
+    .result-box{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px;
+      margin:18px 0;
+      text-align:left;
+    }
+    .result-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .result-item{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:14px;
+      padding:14px;
+    }
+    .result-label{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+    .result-value{
+      font-size:18px;
+      font-weight:800;
+    }
+    .tiny{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.7;
+    }
+    .agent-tag{
+      margin-top:10px;
+      color:#cfe4ff;
+      font-size:13px;
+    }
+    @media (max-width: 760px){
+      .hero h1{font-size:30px}
+      .grid, .result-grid{grid-template-columns:1fr}
+      .body{padding:18px}
+      .card-head{padding:18px 18px 14px}
+      .actions{justify-content:stretch}
+      .actions button{width:100%}
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card" id="loginCard">
-      <h1>版務審核後台登入</h1>
-      <p class="small">僅限 staff / admin 登入。代理專用頁面之後再獨立做。</p>
-      <div class="login-grid">
-        <input id="email" type="email" placeholder="登入 Email">
-        <input id="password" type="password" placeholder="登入密碼">
-        <button onclick="login()">登入</button>
-      </div>
-      <div id="loginMsg" class="login-msg"></div>
+    <div class="hero">
+      <div class="badge">信用額度審核申請・線上填寫</div>
+      <h1>天城娛樂城帳號開通申請</h1>
+      <p>請先填寫基本資料，再填寫職務信用額度評估資訊。完成後系統將送交審核，並引導你聯繫版務。</p>
+      <div class="agent-tag" id="agentTag">目前通路：官方直客</div>
     </div>
 
-    <div id="adminApp" class="hidden">
-      <div class="card">
-        <div class="topbar">
+    <div class="card" id="formCard">
+      <div class="card-head">
+        <h2>線上申請表</h2>
+        <div class="steps">
+          <div class="step-pill active" id="pill1">第 1 步｜基本資料</div>
+          <div class="step-pill" id="pill2">第 2 步｜職務信用額度評估</div>
+        </div>
+      </div>
+
+      <div class="body" id="step1">
+        <h3 class="section-title">基本資料</h3>
+
+        <div class="grid">
           <div>
-            <h2 style="margin-bottom:6px;">信用申請審核後台</h2>
-            <div class="small" id="userInfo">未登入</div>
+            <label>姓名 <span class="req">*</span></label>
+            <input id="full_name" placeholder="請輸入姓名">
+            <div id="err-full_name" class="error"></div>
           </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <span class="tag">admin / staff 可查看全部</span>
-            <button class="btn-secondary" onclick="logout()">登出</button>
+
+          <div>
+            <label>手機號碼 <span class="req">*</span></label>
+            <input id="phone" placeholder="例如：0912345678" maxlength="10">
+            <div class="hint">限台灣手機格式，需為 09 開頭共 10 碼。</div>
+            <div id="err-phone" class="error"></div>
+          </div>
+
+          <div>
+            <label>身分證字號 <span class="req">*</span></label>
+            <input id="national_id" placeholder="例如：A123456789" maxlength="10">
+            <div class="hint">格式需正確，且同一身分證字號不可重複申請。</div>
+            <div id="err-national_id" class="error"></div>
+          </div>
+
+          <div>
+            <label>LINE ID <span class="req">*</span></label>
+            <input id="line_id" placeholder="請輸入 LINE ID">
+            <div id="err-line_id" class="error"></div>
+          </div>
+
+          <div class="full">
+            <label>現居地址 <span class="req">*</span></label>
+            <input id="current_address" placeholder="請輸入現居地址">
+            <div id="err-current_address" class="error"></div>
+          </div>
+
+          <div>
+            <label>緊急聯絡人姓名 <span class="req">*</span></label>
+            <input id="emergency_contact" placeholder="請輸入緊急聯絡人姓名">
+            <div id="err-emergency_contact" class="error"></div>
+          </div>
+
+          <div>
+            <label>緊急聯絡人關係 <span class="req">*</span></label>
+            <input id="relationship" placeholder="例如：配偶、父母、兄弟姊妹">
+            <div id="err-relationship" class="error"></div>
+          </div>
+
+          <div class="full">
+            <label>緊急聯絡人電話 <span class="req">*</span></label>
+            <input id="emergency_phone" placeholder="請輸入緊急聯絡人電話">
+            <div id="err-emergency_phone" class="error"></div>
           </div>
         </div>
 
-        <div class="toolbar">
-          <input id="searchKeyword" placeholder="搜尋姓名 / 電話 / LINE ID">
-          <select id="filterStatus">
-            <option value="">全部狀態</option>
-            <option value="待審核">待審核</option>
-            <option value="已聯繫">已聯繫</option>
-            <option value="通過">通過</option>
-            <option value="拒絕">拒絕</option>
-          </select>
-          <input id="filterAgent" placeholder="代理代碼，例如 A001">
-          <button onclick="loadData()">查詢</button>
+        <div id="step1Msg" class="msg error-box"></div>
+
+        <div class="actions">
+          <button onclick="goStep2()">下一步</button>
+        </div>
+      </div>
+
+      <div class="body" id="step2" style="display:none;">
+        <h3 class="section-title">職務信用額度評估資訊</h3>
+
+        <div class="grid">
+          <div>
+            <label>任職公司全稱 <span class="req">*</span></label>
+            <input id="company_name" placeholder="請輸入公司全稱">
+            <div id="err-company_name" class="error"></div>
+          </div>
+
+          <div>
+            <label>公司電話 <span class="req">*</span></label>
+            <input id="company_phone" placeholder="請輸入公司電話">
+            <div id="err-company_phone" class="error"></div>
+          </div>
+
+          <div class="full">
+            <label>公司地址</label>
+            <input id="company_address" placeholder="公司地址可不填">
+            <div class="hint">公司地址為選填。</div>
+          </div>
+
+          <div class="full">
+            <label>月薪級距 <span class="req">*</span></label>
+            <select id="monthly_salary_range">
+              <option value="">請選擇</option>
+              <option value="A.3萬以下">A.3萬以下</option>
+              <option value="B.3-5萬">B.3-5萬</option>
+              <option value="C.5-8萬">C.5-8萬</option>
+              <option value="D.8萬以上">D.8萬以上</option>
+            </select>
+            <div id="err-monthly_salary_range" class="error"></div>
+          </div>
         </div>
 
-        <div style="overflow:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>建立時間</th>
-                <th>代理</th>
-                <th>會員資料</th>
-                <th>職務資料</th>
-                <th>狀態 / 備註</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
+        <div id="step2Msg" class="msg error-box"></div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="backStep1()">上一步</button>
+          <button id="submitBtn" onclick="submitForm()">送出申請</button>
         </div>
+      </div>
+    </div>
+
+    <div class="card success-view" id="successView">
+      <div style="font-size:72px; line-height:1;">✓</div>
+      <h3>申請已送出，請立即聯繫版務</h3>
+      <p>你的資料已成功送出，系統已送交審核。為加快核對與開通速度，請立即點擊下方按鈕聯繫版務。</p>
+
+      <div class="result-box">
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">系統預估額度</div>
+            <div class="result-value" id="resultCredit">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">審核狀態</div>
+            <div class="result-value">待審核</div>
+          </div>
+        </div>
+        <div class="tiny">
+          實際核准額度仍以人工審核結果為準。建議你立即聯繫版務，提供申請姓名與手機，以加快處理流程。
+        </div>
+      </div>
+
+      <div class="actions" style="justify-content:center;">
+        <button onclick="openLine()">👉 點我聯繫版務 LINE</button>
+        <button class="btn-secondary" onclick="resetForm()">重新填寫</button>
       </div>
     </div>
   </div>
@@ -258,185 +407,298 @@
       "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
     );
 
-    let currentUser = null;
-    let currentRole = null;
+    const LINE_URL = "https://line.me/ti/p/rVBnRpG5SY";
+    const AGENTS = ["A001", "A002", "A003", "A004"];
 
-    async function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const msg = document.getElementById("loginMsg");
-      msg.textContent = "";
+    function getAgentCode() {
+      const params = new URLSearchParams(window.location.search);
+      const value = (params.get("agent") || "").toUpperCase().trim();
+      return AGENTS.includes(value) ? value : null;
+    }
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+    function getAgentLabel(code) {
+      if (!code) return "官方直客";
+      return code;
+    }
 
-      if (error) {
-        msg.textContent = "登入失敗：" + error.message;
+    const currentAgentCode = getAgentCode();
+    document.getElementById("agentTag").textContent = `目前通路：${getAgentLabel(currentAgentCode)}`;
+
+    function setError(id, text) {
+      const el = document.getElementById(`err-${id}`);
+      if (!el) return;
+      el.textContent = text || "";
+      el.classList.toggle("show", Boolean(text));
+    }
+
+    function clearErrors() {
+      [
+        "full_name","phone","national_id","line_id","current_address",
+        "emergency_contact","relationship","emergency_phone",
+        "company_name","company_phone","monthly_salary_range"
+      ].forEach(id => setError(id, ""));
+      hideMessage("step1Msg");
+      hideMessage("step2Msg");
+    }
+
+    function showMessage(id, text, isSuccess = false) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = `msg show ${isSuccess ? "success-box" : "error-box"}`;
+    }
+
+    function hideMessage(id) {
+      const el = document.getElementById(id);
+      el.textContent = "";
+      el.className = "msg error-box";
+    }
+
+    function goStep2() {
+      clearErrors();
+      if (!validateStep1()) return;
+
+      document.getElementById("step1").style.display = "none";
+      document.getElementById("step2").style.display = "block";
+      document.getElementById("pill1").classList.remove("active");
+      document.getElementById("pill2").classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function backStep1() {
+      document.getElementById("step2").style.display = "none";
+      document.getElementById("step1").style.display = "block";
+      document.getElementById("pill2").classList.remove("active");
+      document.getElementById("pill1").classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function normalizeNationalId(id) {
+      return (id || "").toUpperCase().replace(/\s+/g, "");
+    }
+
+    function isTaiwanMobile(v) {
+      return /^09\d{8}$/.test(v);
+    }
+
+    function isTaiwanNationalId(id) {
+      id = normalizeNationalId(id);
+      if (!/^[A-Z][12][0-9]{8}$/.test(id)) return false;
+
+      const city = {
+        A:10,B:11,C:12,D:13,E:14,F:15,G:16,H:17,I:34,J:18,K:19,L:20,
+        M:21,N:22,O:35,P:23,Q:24,R:25,S:26,T:27,U:28,V:29,W:32,X:30,
+        Y:31,Z:33
+      };
+
+      const code = city[id[0]];
+      if (!code) return false;
+
+      let sum = Math.floor(code / 10) + (code % 10) * 9;
+      const weights = [8,7,6,5,4,3,2,1,1];
+
+      for (let i = 1; i <= 9; i++) {
+        sum += parseInt(id[i], 10) * weights[i - 1];
+      }
+
+      return sum % 10 === 0;
+    }
+
+    function getEstimatedCredit(salaryRange) {
+      const map = {
+        "A.3萬以下": 4500,
+        "B.3-5萬": 5000,
+        "C.5-8萬": 5500,
+        "D.8萬以上": 6000
+      };
+      return map[salaryRange] || 4500;
+    }
+
+    function validateStep1() {
+      let ok = true;
+
+      const full_name = document.getElementById("full_name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const national_id = normalizeNationalId(document.getElementById("national_id").value);
+      const line_id = document.getElementById("line_id").value.trim();
+      const current_address = document.getElementById("current_address").value.trim();
+      const emergency_contact = document.getElementById("emergency_contact").value.trim();
+      const relationship = document.getElementById("relationship").value.trim();
+      const emergency_phone = document.getElementById("emergency_phone").value.trim();
+
+      if (!full_name) {
+        setError("full_name", "請輸入姓名");
+        ok = false;
+      }
+
+      if (!isTaiwanMobile(phone)) {
+        setError("phone", "手機號碼格式錯誤，需為 09 開頭共 10 碼");
+        ok = false;
+      }
+
+      if (!isTaiwanNationalId(national_id)) {
+        setError("national_id", "身分證字號格式錯誤");
+        ok = false;
+      }
+
+      if (!line_id) {
+        setError("line_id", "請輸入 LINE ID");
+        ok = false;
+      }
+
+      if (!current_address) {
+        setError("current_address", "請輸入現居地址");
+        ok = false;
+      }
+
+      if (!emergency_contact) {
+        setError("emergency_contact", "請輸入緊急聯絡人姓名");
+        ok = false;
+      }
+
+      if (!relationship) {
+        setError("relationship", "請輸入緊急聯絡人關係");
+        ok = false;
+      }
+
+      if (!emergency_phone) {
+        setError("emergency_phone", "請輸入緊急聯絡人電話");
+        ok = false;
+      }
+
+      if (!ok) {
+        showMessage("step1Msg", "請先完整填寫第 1 頁資料。");
+      }
+
+      document.getElementById("national_id").value = national_id;
+
+      return ok;
+    }
+
+    function validateStep2() {
+      let ok = true;
+
+      const company_name = document.getElementById("company_name").value.trim();
+      const company_phone = document.getElementById("company_phone").value.trim();
+      const monthly_salary_range = document.getElementById("monthly_salary_range").value;
+
+      if (!company_name) {
+        setError("company_name", "請輸入任職公司全稱");
+        ok = false;
+      }
+
+      if (!company_phone) {
+        setError("company_phone", "請輸入公司電話");
+        ok = false;
+      }
+
+      if (!monthly_salary_range) {
+        setError("monthly_salary_range", "請選擇月薪級距");
+        ok = false;
+      }
+
+      if (!ok) {
+        showMessage("step2Msg", "請先完整填寫第 2 頁資料。");
+      }
+
+      return ok;
+    }
+
+    async function submitForm() {
+      clearErrors();
+
+      if (!validateStep1()) {
+        document.getElementById("step2").style.display = "none";
+        document.getElementById("step1").style.display = "block";
+        document.getElementById("pill2").classList.remove("active");
+        document.getElementById("pill1").classList.add("active");
         return;
       }
 
-      await initApp();
-    }
+      if (!validateStep2()) return;
 
-    async function logout() {
-      await supabase.auth.signOut();
-      document.getElementById("adminApp").classList.add("hidden");
-      document.getElementById("loginCard").classList.remove("hidden");
-      document.getElementById("loginMsg").textContent = "";
-    }
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "送出中...";
 
-    async function initApp() {
-      const { data: authData } = await supabase.auth.getUser();
-      currentUser = authData.user;
+      const full_name = document.getElementById("full_name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const national_id = normalizeNationalId(document.getElementById("national_id").value);
+      const line_id = document.getElementById("line_id").value.trim();
+      const current_address = document.getElementById("current_address").value.trim();
+      const emergency_contact = document.getElementById("emergency_contact").value.trim();
+      const relationship = document.getElementById("relationship").value.trim();
+      const emergency_phone = document.getElementById("emergency_phone").value.trim();
 
-      if (!currentUser) {
-        document.getElementById("adminApp").classList.add("hidden");
-        document.getElementById("loginCard").classList.remove("hidden");
-        return;
-      }
+      const company_name = document.getElementById("company_name").value.trim();
+      const company_phone = document.getElementById("company_phone").value.trim();
+      const company_address = document.getElementById("company_address").value.trim();
+      const monthly_salary_range = document.getElementById("monthly_salary_range").value;
+      const estimated_credit = getEstimatedCredit(monthly_salary_range);
 
-      const { data: roleRow, error: roleError } = await supabase
-        .from("user_roles")
-        .select("*")
-        .eq("user_id", currentUser.id)
-        .single();
-
-      if (roleError || !roleRow || !["staff", "admin"].includes(roleRow.role)) {
-        alert("你沒有版務後台權限");
-        await supabase.auth.signOut();
-        document.getElementById("adminApp").classList.add("hidden");
-        document.getElementById("loginCard").classList.remove("hidden");
-        return;
-      }
-
-      currentRole = roleRow.role;
-
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("adminApp").classList.remove("hidden");
-      document.getElementById("userInfo").textContent =
-        `目前登入：${roleRow.display_name || currentUser.email}｜角色：${roleRow.role}`;
-
-      await loadData();
-    }
-
-    async function loadData() {
-      let query = supabase
-        .from("credit_applications")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      const keyword = document.getElementById("searchKeyword").value.trim();
-      const status = document.getElementById("filterStatus").value;
-      const agent = document.getElementById("filterAgent").value.trim();
-
-      if (status) {
-        query = query.eq("review_status", status);
-      }
-
-      if (agent) {
-        query = query.eq("agent_code", agent);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        alert("讀取資料失敗：" + error.message);
-        return;
-      }
-
-      let rows = data || [];
-
-      if (keyword) {
-        rows = rows.filter(row => {
-          const searchText = [
-            row.full_name || "",
-            row.phone || "",
-            row.line_id || ""
-          ].join(" ").toLowerCase();
-          return searchText.includes(keyword.toLowerCase());
-        });
-      }
-
-      const tbody = document.getElementById("tbody");
-
-      tbody.innerHTML = rows.map(row => `
-        <tr>
-          <td data-label="建立時間">${formatTime(row.created_at)}</td>
-          <td data-label="代理">${escapeHtml(row.agent_code || "-")}</td>
-          <td data-label="會員資料">
-            <div><strong>${escapeHtml(row.full_name || "")}</strong></div>
-            <div class="small">電話：${escapeHtml(row.phone || "")}</div>
-            <div class="small">LINE：${escapeHtml(row.line_id || "")}</div>
-            <div class="small">地址：${escapeHtml(row.current_address || "")}</div>
-            <div class="small">緊急聯絡人：${escapeHtml(row.emergency_contact || "")}</div>
-            <div class="small">關係：${escapeHtml(row.relationship || "")}</div>
-            <div class="small">緊急電話：${escapeHtml(row.emergency_phone || "")}</div>
-          </td>
-          <td data-label="職務資料">
-            <div class="small">公司：${escapeHtml(row.company_name || "")}</div>
-            <div class="small">公司地址：${escapeHtml(row.company_address || "")}</div>
-            <div class="small">公司電話：${escapeHtml(row.company_phone || "")}</div>
-            <div class="small">薪資級距：${escapeHtml(row.monthly_salary_range || "")}</div>
-          </td>
-          <td data-label="狀態 / 備註">
-            <div class="status ${row.review_status || "待審核"}">${row.review_status || "待審核"}</div>
-            <textarea id="note-${row.id}" placeholder="版務備註" style="margin-top:10px;">${escapeHtml(row.reviewer_note || "")}</textarea>
-          </td>
-          <td data-label="操作">
-            <div class="actions">
-              <select id="status-${row.id}">
-                <option value="待審核" ${row.review_status === "待審核" ? "selected" : ""}>待審核</option>
-                <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
-                <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
-                <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
-              </select>
-              <button onclick="saveRow(${row.id})">儲存</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
-    }
-
-    async function saveRow(id) {
-      const status = document.getElementById(`status-${id}`).value;
-      const note = document.getElementById(`note-${id}`).value.trim();
-
-      const { error } = await supabase
-        .from("credit_applications")
-        .update({
-          review_status: status,
-          reviewer_note: note,
-          reviewer_user_id: currentUser.id
-        })
-        .eq("id", id);
-
-      if (error) {
-        alert("更新失敗：" + error.message);
-        return;
-      }
-
-      alert("已更新");
-      await loadData();
-    }
-
-    function formatTime(v) {
-      if (!v) return "-";
       try {
-        return new Date(v).toLocaleString("zh-TW");
-      } catch {
-        return v;
+        const payload = {
+          application_no: "APP" + Date.now(),
+          full_name,
+          national_id,
+          phone,
+          line_id,
+          current_address,
+          emergency_contact,
+          relationship,
+          emergency_phone,
+          company_name,
+          company_address: company_address || null,
+          company_phone,
+          monthly_salary_range,
+          monthly_salary_label: monthly_salary_range,
+          estimated_credit,
+          agent_code: currentAgentCode,
+          review_status: "待審核"
+        };
+
+        const { error } = await supabase
+          .from("credit_applications")
+          .insert([payload]);
+
+        if (error) {
+          const msg = String(error.message || "");
+          if (error.code === "23505" || msg.includes("此身分證字號已申請過") || msg.toLowerCase().includes("duplicate")) {
+            showMessage("step2Msg", "此身分證字號已申請過，無法重複註冊。");
+          } else {
+            showMessage("step2Msg", "送出失敗：" + msg);
+          }
+          return;
+        }
+
+        document.getElementById("resultCredit").textContent = estimated_credit.toLocaleString();
+        document.getElementById("formCard").style.display = "none";
+        document.getElementById("successView").classList.add("show");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        showMessage("step2Msg", "送出失敗：" + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "送出申請";
       }
     }
 
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    function openLine() {
+      window.open(LINE_URL, "_blank");
     }
 
-    initApp();
+    function resetForm() {
+      [
+        "full_name","phone","national_id","line_id","current_address",
+        "emergency_contact","relationship","emergency_phone",
+        "company_name","company_phone","company_address"
+      ].forEach(id => document.getElementById(id).value = "");
+
+      document.getElementById("monthly_salary_range").value = "";
+      clearErrors();
+      document.getElementById("successView").classList.remove("show");
+      document.getElementById("formCard").style.display = "block";
+      backStep1();
+    }
   </script>
 </body>
 </html>
