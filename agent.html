@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>代理後台</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
     :root{
       --bg:#081225;
@@ -43,11 +43,11 @@
       line-height:1.7;
     }
     .hidden{display:none!important}
-    input,button{
+    input,button,select{
       font-family:inherit;
       font-size:14px;
     }
-    input{
+    input,select{
       width:100%;
       padding:11px 12px;
       border-radius:12px;
@@ -55,6 +55,10 @@
       background:#192546;
       color:#fff;
       outline:none;
+    }
+    select option{
+      color:#111;
+      background:#fff;
     }
     button{
       padding:11px 16px;
@@ -238,7 +242,9 @@
   </div>
 
   <script>
-    const supabase = window.supabase.createClient(
+    const { createClient } = supabase;
+
+    const supabaseClient = createClient(
       "https://trhxabsjnzgfscxvsbiy.supabase.co",
       "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
     );
@@ -269,7 +275,10 @@
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
       if (error) {
         setLoginMsg("登入失敗：" + error.message);
@@ -280,7 +289,7 @@
     }
 
     async function initApp() {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser();
       if (userError) {
         setLoginMsg("取得使用者失敗：" + userError.message);
         return;
@@ -292,7 +301,7 @@
         return;
       }
 
-      const { data: roleData, error: roleError } = await supabase
+      const { data: roleData, error: roleError } = await supabaseClient
         .from("user_roles")
         .select("*")
         .eq("user_id", currentUser.id)
@@ -322,7 +331,7 @@
     async function loadData() {
       setAppMsg("");
 
-      let query = supabase
+      let query = supabaseClient
         .from("credit_applications")
         .select("*")
         .eq("agent_code", currentAgentCode)
@@ -399,7 +408,7 @@
     }
 
     async function logout() {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       location.reload();
     }
 
