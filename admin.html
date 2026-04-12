@@ -196,7 +196,7 @@
   <div class="wrap">
     <div class="card" id="loginCard">
       <h1>版務審核後台登入</h1>
-      <div class="small">僅限 admin / staff / agent 帳號登入。代理登入後只會看到自己的資料。</div>
+      <div class="small">僅限 admin / staff 帳號登入。管理員可查看全部資料並進行審核。</div>
 
       <div class="login-grid">
         <input id="email" type="email" placeholder="登入 Email">
@@ -263,14 +263,15 @@
   </div>
 
   <script>
-    const supabase = window.supabase.createClient(
+    const { createClient } = supabase;
+
+    const supabaseClient = createClient(
       "https://trhxabsjnzgfscxvsbiy.supabase.co",
       "sb_publishable_MKnBFZ4b2OkcDtLSTZO6Ow_0IG2LllT"
     );
 
     let currentUser = null;
     let currentRole = null;
-    let currentAgentCode = null;
 
     function setLoginMsg(text, ok = false) {
       const el = document.getElementById("loginMsg");
@@ -288,27 +289,28 @@
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      console.log("開始登入");
+      setLoginMsg("");
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
+      if (!email || !password) {
+        setLoginMsg("請輸入 Email 與密碼");
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
         email,
         password
       });
 
-        console.log("登入結果", data, error);
-
-        if (error) {
-        alert("登入失敗：" + error.message);
+      if (error) {
+        setLoginMsg("登入失敗：" + error.message);
         return;
-     }
+      }
 
-        alert("登入成功");
-
-        window.location.href = "dashboard.html";
+      await initApp();
     }
 
     async function initApp() {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
       if (userError) {
         setLoginMsg("取得使用者失敗：" + userError.message);
@@ -322,7 +324,7 @@
         return;
       }
 
-      const { data: roleData, error: roleError } = await supabase
+      const { data: roleData, error: roleError } = await supabaseClient
         .from("user_roles")
         .select("*")
         .eq("user_id", currentUser.id)
@@ -339,19 +341,17 @@
       }
 
       currentRole = roleData.role;
-      currentAgentCode = roleData.agent_code || null;
 
-      if (!["admin", "staff", "agent"].includes(currentRole)) {
-        setLoginMsg("此帳號沒有後台權限");
+      if (!["admin", "staff"].includes(currentRole)) {
+        setLoginMsg("此帳號不是版務 / 管理員帳號，請改用 agent.html");
         return;
       }
 
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("appCard").classList.remove("hidden");
       document.getElementById("userInfo").textContent =
-        `${currentUser.email}｜角色：${currentRole}${currentAgentCode ? "｜代理：" + currentAgentCode : ""}`;
-      document.getElementById("roleTag").textContent =
-        currentRole === "agent" ? `代理 ${currentAgentCode}` : `管理者 ${currentRole}`;
+        `${currentUser.email}｜角色：${currentRole}`;
+      document.getElementById("roleTag").textContent = `管理者 ${currentRole}`;
 
       await loadData();
     }
@@ -359,21 +359,17 @@
     async function loadData() {
       setAppMsg("");
 
-      let query = supabase
+      let query = supabaseClient
         .from("credit_applications")
         .select("*")
         .order("created_at", { ascending: false });
-
-      if (currentRole === "agent") {
-        query = query.eq("agent_code", currentAgentCode);
-      }
 
       const status = document.getElementById("filterStatus").value;
       const filterAgent = document.getElementById("filterAgent").value.trim();
       const keyword = document.getElementById("searchKeyword").value.trim().toLowerCase();
 
       if (status) query = query.eq("review_status", status);
-      if (filterAgent && currentRole !== "agent") query = query.eq("agent_code", filterAgent);
+      if (filterAgent) query = query.eq("agent_code", filterAgent);
 
       const { data, error } = await query;
 
@@ -431,24 +427,18 @@
           </td>
           <td data-label="狀態 / 備註">
             <div class="status ${row.review_status || "待審核"}">${escapeHtml(row.review_status || "待審核")}</div>
-            <textarea id="note-${row.id}" ${currentRole === "agent" ? "disabled" : ""}>${escapeText(row.reviewer_note || "")}</textarea>
+            <textarea id="note-${row.id}">${escapeText(row.reviewer_note || "")}</textarea>
           </td>
           <td data-label="操作">
-            ${
-              currentRole === "agent"
-                ? "-"
-                : `
-                  <div class="actions">
-                    <select id="status-${row.id}">
-                      <option value="待審核" ${(row.review_status || "待審核") === "待審核" ? "selected" : ""}>待審核</option>
-                      <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
-                      <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
-                      <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
-                    </select>
-                    <button onclick="saveRow('${row.id}')">儲存</button>
-                  </div>
-                `
-            }
+            <div class="actions">
+              <select id="status-${row.id}">
+                <option value="待審核" ${(row.review_status || "待審核") === "待審核" ? "selected" : ""}>待審核</option>
+                <option value="已聯繫" ${row.review_status === "已聯繫" ? "selected" : ""}>已聯繫</option>
+                <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
+                <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
+              </select>
+              <button onclick="saveRow('${row.id}')">儲存</button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
@@ -468,7 +458,7 @@
       const status = document.getElementById(`status-${id}`).value;
       const note = document.getElementById(`note-${id}`).value.trim();
 
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from("credit_applications")
         .update({
           review_status: status,
@@ -487,7 +477,7 @@
     }
 
     async function logout() {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       location.reload();
     }
 
