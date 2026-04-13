@@ -201,7 +201,7 @@
       <div class="login-grid">
         <input id="email" type="email" placeholder="登入 Email">
         <input id="password" type="password" placeholder="登入密碼">
-        <button onclick="login()">登入</button>
+        <button type="button" onclick="login()">登入</button>
       </div>
 
       <div id="loginMsg" class="msg"></div>
@@ -216,7 +216,7 @@
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <span class="tag" id="roleTag">未登入</span>
-            <button class="btn-secondary" onclick="logout()">登出</button>
+            <button type="button" class="btn-secondary" onclick="logout()">登出</button>
           </div>
         </div>
 
@@ -238,7 +238,7 @@
             <option value="拒絕">拒絕</option>
           </select>
           <input id="filterAgent" placeholder="代理代碼，例如 A001">
-          <button onclick="loadData()">查詢</button>
+          <button type="button" onclick="loadData()">查詢</button>
         </div>
 
         <div id="appMsg" class="msg"></div>
@@ -324,38 +324,27 @@
         return;
       }
 
-const { data: roleRows, error: roleError } = await supabaseClient
-  .from("user_roles")
-  .select("*")
-  .eq("user_id", currentUser.id);
-
-if (roleError) {
-  setLoginMsg("讀取角色失敗：" + roleError.message);
-  return;
-}
-
-if (!roleRows || roleRows.length === 0) {
-  setLoginMsg("查無角色資料，請確認此帳號是否已設定角色");
-  return;
-}
-
-if (roleRows.length > 1) {
-  setLoginMsg("角色資料異常：同帳號有多筆角色，請回 Supabase 檢查");
-  return;
-}
-
-const roleData = roleRows[0];
+      const { data: roleRows, error: roleError } = await supabaseClient
+        .from("user_roles")
+        .select("*")
+        .eq("user_id", currentUser.id);
 
       if (roleError) {
         setLoginMsg("讀取角色失敗：" + roleError.message);
         return;
       }
 
-      if (!roleData) {
-        setLoginMsg("查無角色資料");
+      if (!roleRows || roleRows.length === 0) {
+        setLoginMsg("查無角色資料，請確認此帳號是否已設定角色");
         return;
       }
 
+      if (roleRows.length > 1) {
+        setLoginMsg("角色資料異常：同帳號有多筆角色，請回 Supabase 檢查");
+        return;
+      }
+
+      const roleData = roleRows[0];
       currentRole = roleData.role;
 
       if (!["admin", "staff"].includes(currentRole)) {
@@ -453,7 +442,7 @@ const roleData = roleRows[0];
                 <option value="通過" ${row.review_status === "通過" ? "selected" : ""}>通過</option>
                 <option value="拒絕" ${row.review_status === "拒絕" ? "selected" : ""}>拒絕</option>
               </select>
-              <button onclick="saveRow('${row.id}')">儲存</button>
+              <button type="button" onclick="saveRow('${row.id}')">儲存</button>
             </div>
           </td>
         `;
