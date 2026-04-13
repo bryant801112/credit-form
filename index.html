@@ -10,6 +10,7 @@
       --bg:#081225;
       --card:#101a35;
       --line:rgba(255,255,255,.08);
+      --line-strong:rgba(255,255,255,.14);
       --text:#eef2ff;
       --muted:#aab3d1;
       --primary:#7c5cff;
@@ -101,9 +102,18 @@
       color:#fff;
       outline:none;
       font-size:15px;
+      transition:border-color .18s ease, box-shadow .18s ease;
     }
     input::placeholder{color:#95a1c8}
     select option{color:#111;background:#fff}
+    input:focus, select:focus{
+      border-color:rgba(124,92,255,.65);
+      box-shadow:0 0 0 3px rgba(124,92,255,.14);
+    }
+    .field-error{
+      border-color:rgba(255,142,142,.8)!important;
+      box-shadow:0 0 0 3px rgba(255,142,142,.12)!important;
+    }
     .hint{
       margin-top:6px;
       color:var(--muted);
@@ -147,6 +157,10 @@
       cursor:pointer;
       color:#fff;
       background:linear-gradient(90deg,var(--primary),var(--primary2));
+    }
+    button:disabled{
+      opacity:.65;
+      cursor:not-allowed;
     }
     .btn-secondary{background:#37456f}
     .success-view{
@@ -221,20 +235,20 @@
         <div class="grid">
           <div>
             <label>姓名 <span class="req">*</span></label>
-            <input id="full_name" placeholder="請輸入姓名">
+            <input id="full_name" placeholder="請輸入姓名" autocomplete="name">
             <div id="err-full_name" class="error"></div>
           </div>
 
           <div>
             <label>手機號碼 <span class="req">*</span></label>
-            <input id="phone" placeholder="例如：0912345678" maxlength="10">
+            <input id="phone" placeholder="例如：0912345678" maxlength="10" inputmode="numeric" autocomplete="tel">
             <div class="hint">限台灣手機格式，需為 09 開頭共 10 碼。</div>
             <div id="err-phone" class="error"></div>
           </div>
 
           <div>
             <label>身分證字號 <span class="req">*</span></label>
-            <input id="national_id" placeholder="例如：A123456789" maxlength="10">
+            <input id="national_id" placeholder="例如：A123456789" maxlength="10" autocapitalize="characters" spellcheck="false">
             <div class="hint">格式需正確，且同一身分證字號不可重複申請。</div>
             <div id="err-national_id" class="error"></div>
           </div>
@@ -265,7 +279,7 @@
 
           <div class="full">
             <label>緊急聯絡人電話 <span class="req">*</span></label>
-            <input id="emergency_phone" placeholder="請輸入緊急聯絡人電話">
+            <input id="emergency_phone" placeholder="請輸入緊急聯絡人電話" inputmode="tel">
             <div id="err-emergency_phone" class="error"></div>
           </div>
         </div>
@@ -273,7 +287,7 @@
         <div id="step1Msg" class="msg error-box"></div>
 
         <div class="actions">
-          <button onclick="goStep2()">下一步</button>
+          <button type="button" onclick="goStep2()">下一步</button>
         </div>
       </div>
 
@@ -288,7 +302,7 @@
 
           <div>
             <label>公司電話 <span class="req">*</span></label>
-            <input id="company_phone" placeholder="請輸入公司電話">
+            <input id="company_phone" placeholder="請輸入公司電話" inputmode="tel">
             <div id="err-company_phone" class="error"></div>
           </div>
 
@@ -314,8 +328,8 @@
         <div id="step2Msg" class="msg error-box"></div>
 
         <div class="actions">
-          <button class="btn-secondary" onclick="backStep1()">上一步</button>
-          <button id="submitBtn" onclick="submitForm()">送出申請</button>
+          <button type="button" class="btn-secondary" onclick="backStep1()">上一步</button>
+          <button type="button" id="submitBtn" onclick="submitForm()">送出申請</button>
         </div>
       </div>
     </div>
@@ -350,8 +364,8 @@
       </div>
 
       <div class="actions" style="justify-content:center;">
-        <button onclick="openLine()">👉 點我聯繫版務 LINE</button>
-        <button class="btn-secondary" onclick="resetForm()">重新填寫</button>
+        <button type="button" onclick="openLine()">👉 點我聯繫版務 LINE</button>
+        <button type="button" class="btn-secondary" onclick="resetForm()">重新填寫</button>
       </div>
     </div>
   </div>
@@ -364,6 +378,7 @@
 
     const LINE_URL = "https://line.me/ti/p/rVBnRpG5SY";
     const AGENTS = ["A001", "A002", "A003"];
+    const DEFAULT_CHANNEL_LABEL = "卓越(布)團隊專線";
 
     function getAgentCode() {
       const params = new URLSearchParams(window.location.search);
@@ -372,13 +387,17 @@
     }
 
     const currentAgentCode = getAgentCode();
-    document.getElementById("agentTag").textContent = `目前通路：${currentAgentCode || "官方直客"}`;
+    document.getElementById("agentTag").textContent = `目前通路：${currentAgentCode || DEFAULT_CHANNEL_LABEL}`;
 
     function setError(id, text) {
-      const el = document.getElementById(`err-${id}`);
-      if (!el) return;
-      el.textContent = text || "";
-      el.classList.toggle("show", Boolean(text));
+      const errorEl = document.getElementById(`err-${id}`);
+      const inputEl = document.getElementById(id);
+      if (!errorEl) return;
+      errorEl.textContent = text || "";
+      errorEl.classList.toggle("show", Boolean(text));
+      if (inputEl) {
+        inputEl.classList.toggle("field-error", Boolean(text));
+      }
     }
 
     function clearErrors() {
@@ -403,26 +422,24 @@
       el.className = "msg error-box";
     }
 
-    function goStep2() {
-      clearErrors();
-      if (!validateStep1()) return;
-      document.getElementById("step1").style.display = "none";
-      document.getElementById("step2").style.display = "block";
-      document.getElementById("pill1").classList.remove("active");
-      document.getElementById("pill2").classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function backStep1() {
-      document.getElementById("step2").style.display = "none";
-      document.getElementById("step1").style.display = "block";
-      document.getElementById("pill2").classList.remove("active");
-      document.getElementById("pill1").classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    function focusFirstError(ids) {
+      for (const id of ids) {
+        const errorEl = document.getElementById(`err-${id}`);
+        const inputEl = document.getElementById(id);
+        if (errorEl && errorEl.classList.contains("show") && inputEl) {
+          inputEl.focus();
+          inputEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+      }
     }
 
     function normalizeNationalId(id) {
       return (id || "").toUpperCase().replace(/\s+/g, "");
+    }
+
+    function normalizePhone(value) {
+      return (value || "").replace(/\D+/g, "");
     }
 
     function isTaiwanMobile(v) {
@@ -462,14 +479,18 @@
 
     function validateStep1() {
       let ok = true;
+
       const full_name = document.getElementById("full_name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
+      const phone = normalizePhone(document.getElementById("phone").value);
       const national_id = normalizeNationalId(document.getElementById("national_id").value);
       const line_id = document.getElementById("line_id").value.trim();
       const current_address = document.getElementById("current_address").value.trim();
       const emergency_contact = document.getElementById("emergency_contact").value.trim();
       const relationship = document.getElementById("relationship").value.trim();
       const emergency_phone = document.getElementById("emergency_phone").value.trim();
+
+      document.getElementById("phone").value = phone;
+      document.getElementById("national_id").value = national_id;
 
       if (!full_name) { setError("full_name", "請輸入姓名"); ok = false; }
       if (!isTaiwanMobile(phone)) { setError("phone", "手機號碼格式錯誤，需為 09 開頭共 10 碼"); ok = false; }
@@ -480,9 +501,14 @@
       if (!relationship) { setError("relationship", "請輸入緊急聯絡人關係"); ok = false; }
       if (!emergency_phone) { setError("emergency_phone", "請輸入緊急聯絡人電話"); ok = false; }
 
-      if (!ok) showMessage("step1Msg", "請先完整填寫第 1 頁資料。");
+      if (!ok) {
+        showMessage("step1Msg", "請先完整填寫第 1 頁資料，並確認手機與身分證格式正確。");
+        focusFirstError([
+          "full_name","phone","national_id","line_id",
+          "current_address","emergency_contact","relationship","emergency_phone"
+        ]);
+      }
 
-      document.getElementById("national_id").value = national_id;
       return ok;
     }
 
@@ -496,8 +522,30 @@
       if (!company_phone) { setError("company_phone", "請輸入公司電話"); ok = false; }
       if (!monthly_salary_range) { setError("monthly_salary_range", "請選擇月薪級距"); ok = false; }
 
-      if (!ok) showMessage("step2Msg", "請先完整填寫第 2 頁資料。");
+      if (!ok) {
+        showMessage("step2Msg", "請先完整填寫第 2 頁資料。");
+        focusFirstError(["company_name","company_phone","monthly_salary_range"]);
+      }
+
       return ok;
+    }
+
+    function goStep2() {
+      clearErrors();
+      if (!validateStep1()) return;
+      document.getElementById("step1").style.display = "none";
+      document.getElementById("step2").style.display = "block";
+      document.getElementById("pill1").classList.remove("active");
+      document.getElementById("pill2").classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function backStep1() {
+      document.getElementById("step2").style.display = "none";
+      document.getElementById("step1").style.display = "block";
+      document.getElementById("pill2").classList.remove("active");
+      document.getElementById("pill1").classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     async function submitForm() {
@@ -518,7 +566,7 @@
       submitBtn.textContent = "送出中...";
 
       const full_name = document.getElementById("full_name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
+      const phone = normalizePhone(document.getElementById("phone").value);
       const national_id = normalizeNationalId(document.getElementById("national_id").value);
       const line_id = document.getElementById("line_id").value.trim();
       const current_address = document.getElementById("current_address").value.trim();
@@ -583,7 +631,7 @@
     }
 
     function openLine() {
-      window.open("https://line.me/ti/p/rVBnRpG5SY", "_blank");
+      window.open(LINE_URL, "_blank");
     }
 
     function resetForm() {
@@ -591,7 +639,10 @@
         "full_name","phone","national_id","line_id","current_address",
         "emergency_contact","relationship","emergency_phone",
         "company_name","company_phone","company_address"
-      ].forEach(id => document.getElementById(id).value = "");
+      ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
 
       document.getElementById("monthly_salary_range").value = "";
       clearErrors();
